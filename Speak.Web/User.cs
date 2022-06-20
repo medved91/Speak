@@ -9,5 +9,5 @@ public class User
     
     public string ConnectionId { get; }
 
-    public string Name { get; set; } = "NoName";
+    public string Name { get; set; } = "";
 }

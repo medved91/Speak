@@ -32,13 +32,34 @@ public class WebRtcHub : Hub
         Users.ConnectedUsers.FirstOrDefault(u => u.ConnectionId == userConnectionId)?.Name ?? "Без имени";
 
     /// <summary>
+    /// Метод добавления пользователя в комнату
+    /// </summary>
+    public void AddCurrentUserToRoom(string roomId)
+    {
+        var room = Rooms.CreatedRooms.FirstOrDefault(r => r.RoomId == roomId);
+        if (room == null)
+        {
+            room = new Room(roomId);
+            Rooms.CreatedRooms.Add(room);
+        }
+
+        var currentUser = Users.ConnectedUsers.First(u => u.ConnectionId == Context.ConnectionId);
+        
+        room.UsersInRoom.Add(currentUser);
+    }
+    
+    /// <summary>
     /// Метод получения идентификаторов всех подключенных пользователей, кроме текущего
     /// </summary>
-    public string[] GetOtherConnectedUsers() => 
-        Users.ConnectedUsers
+    public string[] GetOtherConnectedUsersInRoom(string roomId)
+    {
+        var room = Rooms.CreatedRooms.First(r => r.RoomId == roomId);
+        
+        return room.UsersInRoom
             .Where(i => i.ConnectionId != Context.ConnectionId)
             .Select(u => u.ConnectionId)
             .ToArray();
+    }
 
     /// <summary>
     /// Метод, который вызывается клиентом для отправки оффера другому пользователю.
@@ -86,12 +107,15 @@ public class WebRtcHub : Hub
     }
     
     /// <summary>
-    /// Метод вызывается фронтом нового пользователя для оповещения остальных о его пришествии.
+    /// Метод вызывается фронтом нового пользователя для оповещения остальных в комнате о его пришествии.
     /// Остальные, получив уведомление, вышлют оффер новому клиенту
     /// </summary>
-    public async Task NotifyOthersAboutNewUser()
+    public async Task NotifyOthersInRoomAboutNewUser(string roomId)
     {
-        await Clients.Others.SendAsync("SendOfferToUser", Context.ConnectionId);
+        var room = Rooms.CreatedRooms.First(r => r.RoomId == roomId);
+        
+        foreach (var user in room.UsersInRoom.Where(u => u.ConnectionId != Context.ConnectionId))
+            await Clients.Client(user.ConnectionId).SendAsync("SendOfferToUser", Context.ConnectionId);
     }
 
     public override Task OnConnectedAsync()
@@ -103,8 +127,11 @@ public class WebRtcHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var userToRemove = Users.ConnectedUsers.FirstOrDefault(u => u.ConnectionId == Context.ConnectionId);
-        if (userToRemove != null) Users.ConnectedUsers.Remove(userToRemove);
+        var userToRemove = Users.ConnectedUsers.First(u => u.ConnectionId == Context.ConnectionId);
+        Users.ConnectedUsers.Remove(userToRemove);
+
+        var roomsWithUser = Rooms.CreatedRooms.Where(r => r.UsersInRoom.Contains(userToRemove));
+        foreach (var room in roomsWithUser) room.UsersInRoom.Remove(userToRemove);
 
         await Clients.Others.SendAsync("DisconnectUser", Context.ConnectionId);
         

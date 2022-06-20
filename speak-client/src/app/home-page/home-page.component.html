@@ -8,12 +8,12 @@
     <mat-card-content>
       <mat-form-field color="accent" appearance="outline">
         <mat-label>Идентификатор комнаты</mat-label>
-        <input matInput placeholder="defaultRoomName">
+        <input appSpecialCharacters matInput placeholder="Id_комнаты" [(ngModel)]="roomId">
         <mat-icon matSuffix>link</mat-icon>
-        <mat-hint>Латиницей без пробелов</mat-hint>
+        <mat-hint>Пробелы нельзя</mat-hint>
       </mat-form-field>
       <div class="button-right">
-        <button mat-button [routerLink]="['/room']">{{ "зайти" | uppercase }}</button>
+        <button mat-button [routerLink]="['/room', roomId]">{{ "зайти" | uppercase }}</button>
       </div>
     </mat-card-content>
   </mat-card>

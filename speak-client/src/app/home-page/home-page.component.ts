@@ -7,9 +7,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePageComponent implements OnInit {
 
-  constructor() { }
+  roomId: string;
+  private seed: string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+
+  constructor() {
+    this.roomId = HomePageComponent.randomString(15, this.seed);
+  }
 
   ngOnInit(): void {
+  }
+
+  private static randomString(length: number, chars: string) {
+    let result = '';
+    for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+
+    return result;
   }
 
 }

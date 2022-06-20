@@ -17,6 +17,7 @@ import { FormsModule } from "@angular/forms";
 import { JoinSetupComponent } from './join-setup/join-setup.component';
 import { CallComponent } from './call/call.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { SpecialCharactersDirective } from './special-characters.directive';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { HomePageComponent } from './home-page/home-page.component';
     RoomComponent,
     JoinSetupComponent,
     CallComponent,
-    HomePageComponent
+    HomePageComponent,
+    SpecialCharactersDirective
   ],
     imports: [
         BrowserModule,

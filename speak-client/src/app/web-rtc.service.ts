@@ -68,10 +68,11 @@ export class WebRtcService {
     this.currentUserId = await this.currentUserHubConnection!.invoke<string>("GetConnectionId");
   }
 
-  /// Метод подключения пользователя к созвону. Уведомляет остальных пользователей, провоцируя обмен офферами
-  async joinCall(): Promise<void> {
-    let otherConnectedUserIds = await this.currentUserHubConnection?.invoke<string[]>("GetOtherConnectedUsers");
-    console.log("Получен список людей в комнате: " + otherConnectedUserIds);
+  /// Метод подключения пользователя к комнате. Уведомляет остальных пользователей в комнате, провоцируя обмен офферами
+  async joinRoom(roomId: string): Promise<void> {
+    await this.currentUserHubConnection?.invoke("AddCurrentUserToRoom", roomId);
+    let otherConnectedUserIds = await this.currentUserHubConnection?.invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);
+    console.log("Получен список других людей в комнате: " + otherConnectedUserIds);
 
     if(otherConnectedUserIds?.length === 0) return;
 
@@ -81,7 +82,7 @@ export class WebRtcService {
       await this.findOrCreateUserConnectionByUserId(userId);
     }
 
-    await this.currentUserHubConnection?.invoke("NotifyOthersAboutNewUser");
+    await this.currentUserHubConnection?.invoke("NotifyOthersInRoomAboutNewUser", roomId);
   }
 
   // Метод отправки оффера другому пользователю
