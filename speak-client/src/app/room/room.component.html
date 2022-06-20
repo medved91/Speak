@@ -1,13 +1,2 @@
-<div class="room-content">
-  <mat-card class="room-card mat-elevation-z24">
-    <video mat-card-image [srcObject]="webRtcService.localStream" [muted]="true" autoplay playsinline></video>
-    <mat-card-actions class="button-centered">
-    </mat-card-actions>
-  </mat-card>
-
-  <mat-card *ngFor="let otherUserStream of otherUsersStreams" class="room-card mat-elevation-z24">
-    <video mat-card-image [srcObject]=otherUserStream [muted]="false" autoplay playsinline></video>
-    <mat-card-actions class="button-centered">
-    </mat-card-actions>
-  </mat-card>
-</div>
+<app-join-setup *ngIf="!this.webRtcService.userCompletedJoinSetup"></app-join-setup>
+<app-call *ngIf="this.webRtcService.userCompletedJoinSetup"></app-call>

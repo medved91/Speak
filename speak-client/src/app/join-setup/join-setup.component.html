@@ -1,0 +1,32 @@
+<div class="join-setup-page">
+  <mat-card class="join-setup-card mat-elevation-z24">
+    <mat-card-header>
+      <div mat-card-avatar class="shoulder-camera-header-image"></div>
+      <mat-card-title>Привет!</mat-card-title>
+      <mat-card-subtitle>Проверь, что ты себя видишь</mat-card-subtitle>
+    </mat-card-header>
+    <video mat-card-image [srcObject]="webRtcService.localStream" [muted]="true" autoplay playsinline></video>
+    <mat-card-content>
+      <p *ngIf="!webRtcService.localStream">
+        Разреши доступ к камере и микрофону
+      </p>
+      <p *ngIf="webRtcService.localStream && !webRtcService.localUserName">
+        Напиши, как тебя зовут
+      </p>
+      <p *ngIf="webRtcService.localStream && webRtcService.localUserName">
+        Кажется, все ок) Можно подключаться
+      </p>
+      <p *ngIf="webRtcService.localStream">
+        <mat-form-field color="accent" appearance="outline">
+          <mat-label>Как тебя зовут?</mat-label>
+          <input matInput placeholder="Мое имя" [(ngModel)]="webRtcService.localUserName">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-hint>Используй любые символы</mat-hint>
+        </mat-form-field>
+      </p>
+    </mat-card-content>
+    <mat-card-actions class="button-right">
+      <button *ngIf="webRtcService.localStream && webRtcService.localUserName" mat-button (click)="joinCall()">{{ "подключиться" | uppercase }}</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

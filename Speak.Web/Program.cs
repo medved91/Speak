@@ -35,7 +35,14 @@ if (app.Environment.IsDevelopment()) app.UseSwagger().UseSwaggerUI();
 app
     .UseHttpsRedirection()
     .UseDefaultFiles()
-    .UseStaticFiles()
+    .UseStaticFiles(new StaticFileOptions
+    {
+        OnPrepareResponse = context =>
+        {
+            var headers = context.Context.Response.GetTypedHeaders();
+            headers.CacheControl = new() { Public = true, MaxAge = TimeSpan.FromMinutes(1) };
+        }
+    })
     .UseRouting()
     .UseCors("CorsPolicy")
     .UseAuthorization();

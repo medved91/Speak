@@ -12,6 +12,9 @@ export class WebRtcService {
   };
 
   localStream?: MediaStream;
+  localUserName?: string;
+
+  userCompletedJoinSetup = false;
 
   private currentUserHubConnection?: HubConnection;
   private currentUserId?: string;
@@ -54,8 +57,14 @@ export class WebRtcService {
   async startConnection(): Promise<void>{
     if(this.currentUserHubConnection?.state === 'Connected') return;
 
+    if(!this.localUserName)
+      this.localUserName = "Сегодня у меня нет имени)";
+
     await this.currentUserHubConnection!.start();
     console.log('Успешно подключились к Signalling-серверу');
+
+    await this.currentUserHubConnection!.invoke("SetMyName", this.localUserName);
+
     this.currentUserId = await this.currentUserHubConnection!.invoke<string>("GetConnectionId");
   }
 
@@ -106,7 +115,7 @@ export class WebRtcService {
     await this.registerIceCandidatesEventHandler(connectionWithUser.rtcConnection, fromUserConnectionId);
 
     await this.currentUserHubConnection!
-      .invoke("SendAnswerToUser", connectionWithUser.otherUserHubConnectionId, JSON.stringify(answer));
+      .invoke("SendAnswerToUser", connectionWithUser.otherUser.ConnectionId, JSON.stringify(answer));
   }
 
   // Метод получения ответа от пользователя
@@ -133,12 +142,14 @@ export class WebRtcService {
 
   // Метод находит, а если не нашел - то создает экземпляр подключения к пользователю
   private async findOrCreateUserConnectionByUserId(userId: string): Promise<UserConnection> {
-    let userConnection = this.connections.find(c => c.otherUserHubConnectionId === userId);
+    let userConnection = this.connections.find(c => c.otherUser.ConnectionId === userId);
 
     if (!userConnection) {
       let rtcConnectionWithUser = new RTCPeerConnection(this.rtcConfiguration);
 
-      userConnection = new UserConnection(userId, rtcConnectionWithUser);
+      let otherUserName = await this.currentUserHubConnection!.invoke<string>("GetUserName", userId);
+
+      userConnection = new UserConnection({ ConnectionId: userId, Name: otherUserName }, rtcConnectionWithUser);
       this.connections.push(userConnection);
       this.connectionsBehaviorSubject.next(this.connections);
 
@@ -167,7 +178,7 @@ export class WebRtcService {
   private async disconnectUser(userId: string) {
     console.log("Ищем пользователя с Id " + userId + ", чтоб отключить");
 
-    let index = this.connections.findIndex(c => c.otherUserHubConnectionId === userId);
+    let index = this.connections.findIndex(c => c.otherUser.ConnectionId === userId);
     if (index > -1) {
       console.log("Отключаем пользователя " + userId);
       this.connections.splice(index, 1);

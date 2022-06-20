@@ -17,9 +17,28 @@ public class WebRtcHub : Hub
     public string GetConnectionId() => Context.ConnectionId;
 
     /// <summary>
+    /// Метод, который вызывается, чтобы сохранить имя текущего пользователя
+    /// </summary>
+    public void SetMyName(string name)
+    {
+        var me = Users.ConnectedUsers.FirstOrDefault(u => u.ConnectionId == Context.ConnectionId);
+        if (me != null) me.Name = name;
+    }
+
+    /// <summary>
+    /// Метод вызывается при создании подключения с пользователем на фронте, чтоб узнать его имя
+    /// </summary>
+    public string GetUserName(string userConnectionId) => 
+        Users.ConnectedUsers.FirstOrDefault(u => u.ConnectionId == userConnectionId)?.Name ?? "Без имени";
+
+    /// <summary>
     /// Метод получения идентификаторов всех подключенных пользователей, кроме текущего
     /// </summary>
-    public string[] GetOtherConnectedUsers() => Users.ConnectedUsers.Where(i => i != Context.ConnectionId).ToArray();
+    public string[] GetOtherConnectedUsers() => 
+        Users.ConnectedUsers
+            .Where(i => i.ConnectionId != Context.ConnectionId)
+            .Select(u => u.ConnectionId)
+            .ToArray();
 
     /// <summary>
     /// Метод, который вызывается клиентом для отправки оффера другому пользователю.
@@ -77,14 +96,15 @@ public class WebRtcHub : Hub
 
     public override Task OnConnectedAsync()
     {
-        Users.ConnectedUsers.Add(Context.ConnectionId);
+        Users.ConnectedUsers.Add(new User(Context.ConnectionId));
 
         return base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        Users.ConnectedUsers.Remove(Context.ConnectionId);
+        var userToRemove = Users.ConnectedUsers.FirstOrDefault(u => u.ConnectionId == Context.ConnectionId);
+        if (userToRemove != null) Users.ConnectedUsers.Remove(userToRemove);
 
         await Clients.Others.SendAsync("DisconnectUser", Context.ConnectionId);
         

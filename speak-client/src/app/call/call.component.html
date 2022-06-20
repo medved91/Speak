@@ -1,0 +1,15 @@
+<div *ngIf="webRtcService.localStream" class="call-content">
+  <mat-card class="call-card mat-elevation-z24">
+    <video mat-card-image [srcObject]="webRtcService.localStream" [muted]="true" autoplay playsinline></video>
+    <mat-card-content>
+      {{ webRtcService.localUserName }}
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngFor="let userConnection of otherUserConnections" class="call-card mat-elevation-z24">
+    <video mat-card-image [srcObject]=userConnection.otherUserMediaStream [muted]="false" autoplay playsinline></video>
+    <mat-card-content>
+      {{ userConnection.otherUser.Name }}
+    </mat-card-content>
+  </mat-card>
+</div>

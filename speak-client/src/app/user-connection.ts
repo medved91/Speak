@@ -1,10 +1,12 @@
+import {User} from "../User";
+
 export class UserConnection {
   otherUserMediaStream: MediaStream = new MediaStream();
-  otherUserHubConnectionId: string;
+  otherUser: User;
   rtcConnection: RTCPeerConnection;
 
-  constructor(connectedToUserId: string, rtcConnectionWithUser: RTCPeerConnection) {
-    this.otherUserHubConnectionId = connectedToUserId;
+  constructor(connectedToUser: User, rtcConnectionWithUser: RTCPeerConnection) {
+    this.otherUser = connectedToUser;
     this.rtcConnection = rtcConnectionWithUser;
 
     this.rtcConnection.ontrack = event => {

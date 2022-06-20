@@ -1,4 +1,4 @@
-.room-content {
+.call-content {
   display: flex;
   flex-direction: initial;
   flex-wrap: wrap;
@@ -6,7 +6,7 @@
   padding: 1%;
 }
 
-.room-card {
+.call-card {
   background-color: rgb(65, 56, 65);
   max-width: 300px;
   max-height: 300px;

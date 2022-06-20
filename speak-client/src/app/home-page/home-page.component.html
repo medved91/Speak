@@ -1,0 +1,20 @@
+<div class="permissions-page">
+  <mat-card class="room-card mat-elevation-z24">
+    <mat-card-header>
+      <div mat-card-avatar class="room-door-header-image"></div>
+      <mat-card-title>Комната</mat-card-title>
+      <mat-card-subtitle>Создай новую или зайди по Id существующей</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field color="accent" appearance="outline">
+        <mat-label>Идентификатор комнаты</mat-label>
+        <input matInput placeholder="defaultRoomName">
+        <mat-icon matSuffix>link</mat-icon>
+        <mat-hint>Латиницей без пробелов</mat-hint>
+      </mat-form-field>
+      <div class="button-right">
+        <button mat-button [routerLink]="['/room']">{{ "зайти" | uppercase }}</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

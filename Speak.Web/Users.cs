@@ -2,5 +2,5 @@ namespace Speak.Web;
 
 public static class Users
 {
-    public static readonly List<string> ConnectedUsers = new();
+    public static readonly List<User> ConnectedUsers = new();
 }

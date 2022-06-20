@@ -1,13 +1,15 @@
-.permissions-page {
+.join-setup-page {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   padding: 3%;
 }
 
-.permissions-card {
+.join-setup-card {
   background-color: rgb(65, 56, 65);
   max-width: 400px;
+  margin: 1%;
 }
 
 .shoulder-camera-header-image {
@@ -15,16 +17,9 @@
   background-size: cover;
 }
 
-.button-centered {
+.button-right {
   display: flex;
   justify-content: center;
-}
-
-.video-mask{
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  max-height: 90%;
 }
 
 video {
