@@ -26,9 +26,8 @@ COPY --from=publish /app/publish .
 COPY .cert/cert.pem /usr/local/share/ca-certificates/cert.pem
 RUN update-ca-certificates
 
-ENV ASPNETCORE_URLS=https://+:7135
+ENV ASPNETCORE_URLS=https://+:443
 
-EXPOSE 7135
+EXPOSE 443
 
 ENTRYPOINT ["dotnet", "Speak.Web.dll"]
-

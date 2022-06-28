@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> <!-- это чтоб на мобилке не приближало по дефолту на текстовое поле -->
 <div class="join-setup-page">
   <mat-card class="join-setup-card mat-elevation-z24">
     <mat-card-header>
@@ -19,7 +20,7 @@
       <p *ngIf="webRtcService.localStream">
         <mat-form-field color="accent" appearance="outline">
           <mat-label>Как тебя зовут?</mat-label>
-          <input matInput placeholder="Мое имя" [(ngModel)]="webRtcService.localUserName">
+          <input matInput placeholder="Мое имя" [(ngModel)]="webRtcService.localUserName" content="maximum-scale=1">
           <mat-icon matSuffix>person</mat-icon>
           <mat-hint>Используй любые символы</mat-hint>
         </mat-form-field>

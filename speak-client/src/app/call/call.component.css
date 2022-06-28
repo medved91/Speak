@@ -1,25 +1,92 @@
-.call-content {
+.scenery {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  flex-direction: initial;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+  height: 100vh;
+}
+
+.cameras-dish {
+  overflow: scroll;
+  display: flex;
+  align-content: start;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  padding: 1%;
+  vertical-align: middle;
+  margin-top: 1em;
+  flex: 1;
+  border-radius: 10px;
 }
 
-.call-card {
-  background-color: rgb(65, 56, 65);
-  max-width: 300px;
-  max-height: 300px;
-  margin: 1%;
+.camera {
+  --shadow-dark: 0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  vertical-align: middle;
+  align-self: center;
+  border-radius: 10px;
+  overflow: hidden;
+  display: inline-block;
+  box-shadow: var(--shadow-dark);
+  background: #fff;
+  animation: show 0.4s ease;
+  margin: 5px;
 }
 
-.button-centered {
-  display: flex;
-  justify-content: center;
+.overlay {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:1;
+
+  color: #ececec;
+  text-shadow: 0px 0px 15px #484646;
+  font-family: 'Raleway', sans-serif;
+  margin: 1ex;
+  display: block;
+
+  background-color: rgba(54, 54, 54, 0.5); /* Changing background color */
+  font-weight: bold; /* Making font bold */
+  border-radius: 20px; /* Making border radius */
+  width: auto; /* Making auto-sizable width */
+  height: auto; /* Making auto-sizable height */
+  padding: 5px 10px 5px 10px; /* Making space around letters */
+  font-size: 18px; /* Changing font size */
 }
 
 video {
-  max-height: 30vh;
-  max-width: 100vw;
+  position: absolute;
+  right: 0;
   object-fit: cover;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  -webkit-transition: margin-top 1s ease-in-out;
+  -moz-transition: margin-top 1s ease-in-out;
+  -o-transition: margin-top 1s ease-in-out;
+  transition: margin-top 1s ease-in-out;
+}
+
+/* Animation of Cameras */
+@keyframes show {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
