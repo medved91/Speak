@@ -33,13 +33,13 @@ export class CallComponent implements OnInit {
     let windowArea = sceneWidth * sceneHeight;
     let maxCameraArea = windowArea / (this.otherUserConnections.length + 1);
 
-    return (Math.sqrt(maxCameraArea / 144) * 16) * 0.7;
+    return (Math.sqrt(maxCameraArea / 144) * 16) * 0.6;
   }
 
   getCameraHeight(sceneWidth: number, sceneHeight: number): number {
     let windowArea = sceneWidth * sceneHeight;
     let maxCameraArea = windowArea / (this.otherUserConnections.length + 1);
 
-    return (Math.sqrt(maxCameraArea / 144) * 9) * 0.7;
+    return (Math.sqrt(maxCameraArea / 144) * 9) * 0.6;
   }
 }

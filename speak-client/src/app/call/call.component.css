@@ -8,7 +8,7 @@
   flex-direction: column;
   padding: 0;
   gap: 0;
-  height: 100vh;
+  height: 90vh;
 }
 
 .cameras-dish {
@@ -50,13 +50,13 @@
   margin: 1ex;
   display: block;
 
-  background-color: rgba(54, 54, 54, 0.5); /* Changing background color */
-  font-weight: bold; /* Making font bold */
-  border-radius: 20px; /* Making border radius */
-  width: auto; /* Making auto-sizable width */
-  height: auto; /* Making auto-sizable height */
-  padding: 5px 10px 5px 10px; /* Making space around letters */
-  font-size: 18px; /* Changing font size */
+  background-color: rgba(54, 54, 54, 0.5); /* Цвет фона за текстом имени */
+  font-weight: bold;
+  border-radius: 20px;
+  width: auto;
+  height: auto;
+  padding: 5px 10px 5px 10px;
+  font-size: 18px;
 }
 
 video {
@@ -78,7 +78,7 @@ video {
   transition: margin-top 1s ease-in-out;
 }
 
-/* Animation of Cameras */
+/* Анимация появления камер */
 @keyframes show {
   0% {
     opacity: 0;

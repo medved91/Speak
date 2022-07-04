@@ -1,0 +1,10 @@
+<div class="controls">
+  <button (click)="switchMic()" mat-fab aria-label="Микрофон">
+    <mat-icon *ngIf="micEnabled">mic</mat-icon>
+    <mat-icon *ngIf="!micEnabled">mic_off</mat-icon>
+  </button>
+  <button (click)="switchCam()" mat-fab aria-label="Камера">
+    <mat-icon *ngIf="camEnabled">videocam</mat-icon>
+    <mat-icon *ngIf="!camEnabled">videocam_off</mat-icon>
+  </button>
+</div>

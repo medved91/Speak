@@ -18,6 +18,7 @@ import { JoinSetupComponent } from './join-setup/join-setup.component';
 import { CallComponent } from './call/call.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { SpecialCharactersDirective } from './special-characters.directive';
+import { ControlsComponent } from './controls/controls.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { SpecialCharactersDirective } from './special-characters.directive';
     JoinSetupComponent,
     CallComponent,
     HomePageComponent,
-    SpecialCharactersDirective
+    SpecialCharactersDirective,
+    ControlsComponent
   ],
     imports: [
         BrowserModule,

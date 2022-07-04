@@ -7,7 +7,29 @@ import { BehaviorSubject } from "rxjs";
 export class WebRtcService {
 
   rtcConfiguration: RTCConfiguration = {
-    iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }],
+    iceServers: [
+      {
+        urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+      },
+      {
+        urls: "stun:openrelay.metered.ca:80",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:80",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      }
+    ],
     iceCandidatePoolSize: 10
   };
 
@@ -187,5 +209,25 @@ export class WebRtcService {
       console.log("Пользователь не найден");
     }
     this.connectionsBehaviorSubject.next(this.connections);
+  }
+
+  stopVideo(){
+    let videoTracks = this.localStream?.getVideoTracks();
+    if(videoTracks) videoTracks.forEach(track => track.enabled = false);
+  }
+
+  stopAudio(){
+    let audioTracks = this.localStream?.getAudioTracks();
+    if(audioTracks) audioTracks.forEach(track => track.enabled = false);
+  }
+
+  startVideo(){
+    let videoTracks = this.localStream?.getVideoTracks();
+    if(videoTracks) videoTracks.forEach(track => track.enabled = true);
+  }
+
+  startAudio(){
+    let audioTracks = this.localStream?.getAudioTracks();
+    if(audioTracks) audioTracks.forEach(track => track.enabled = true);
   }
 }
