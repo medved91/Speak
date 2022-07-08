@@ -1,2 +1,6 @@
 <app-join-setup *ngIf="!this.webRtcService.userCompletedJoinSetup"></app-join-setup>
-<app-call *ngIf="this.webRtcService.userCompletedJoinSetup"></app-call>
+
+<div *ngIf="this.webRtcService.userCompletedJoinSetup">
+  <app-call></app-call>
+  <app-chat></app-chat>
+</div>

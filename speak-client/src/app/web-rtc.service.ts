@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { UserConnection } from "./user-connection";
 import { BehaviorSubject } from "rxjs";
+import {ChatMessage} from "./chat-message";
 
 @Injectable({ providedIn: 'root' })
 export class WebRtcService {
@@ -37,9 +38,14 @@ export class WebRtcService {
   localUserName?: string;
 
   userCompletedJoinSetup = false;
+  chatOpened = false;
 
   private currentUserHubConnection?: HubConnection;
-  private currentUserId?: string;
+  currentUserId?: string;
+
+  private chatMessages?: ChatMessage[];
+  private chatMessagesBehaviorSubject = new BehaviorSubject<ChatMessage[]>([]);
+  public chatMessagesObservable = this.chatMessagesBehaviorSubject.asObservable();
 
   private connections: UserConnection[] = [];
   private connectionsBehaviorSubject = new BehaviorSubject<UserConnection[]>([]);
@@ -48,8 +54,8 @@ export class WebRtcService {
   constructor() {
     console.log("Инициализация WebRtcService");
     this.currentUserHubConnection = new HubConnectionBuilder()
-      //.withUrl('https://192.168.0.106:443/signallingHub')
-      .withUrl('https://facetoface.tech/signallingHub')
+      .withUrl('https://192.168.0.106:443/signallingHub')
+      //.withUrl('https://facetoface.tech/signallingHub')
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Debug)
       .build();
@@ -69,6 +75,10 @@ export class WebRtcService {
     // Метод будет вызван с бэка при отправке текущему юзеру ICE-кандидатов
     this.currentUserHubConnection!.on("ReceiveIceCandidate", async (iceCandidate: string, fromUserId: string) =>
       await this.receiveIceCandidateFromUser(fromUserId, iceCandidate));
+
+    // Метод будет вызван с бэка при отправке сообщения в чат комнаты
+    this.currentUserHubConnection!.on("ReceiveChatMessages", async (roomId: string, chatMessages: ChatMessage[]) =>
+      await this.receiveChatMessages(roomId, chatMessages));
 
     // Этот метод вызывается с бэка, когда пользователь отключается
     this.currentUserHubConnection!.on("DisconnectUser", async (userId: string) =>
@@ -93,6 +103,7 @@ export class WebRtcService {
   /// Метод подключения пользователя к комнате. Уведомляет остальных пользователей в комнате, провоцируя обмен офферами
   async joinRoom(roomId: string): Promise<void> {
     await this.currentUserHubConnection?.invoke("AddCurrentUserToRoom", roomId);
+    await this.currentUserHubConnection?.invoke("GetChatMessages", roomId);
     let otherConnectedUserIds = await this.currentUserHubConnection?.invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);
     console.log("Получен список других людей в комнате: " + otherConnectedUserIds);
 
@@ -138,7 +149,7 @@ export class WebRtcService {
     await this.registerIceCandidatesEventHandler(connectionWithUser.rtcConnection, fromUserConnectionId);
 
     await this.currentUserHubConnection!
-      .invoke("SendAnswerToUser", connectionWithUser.otherUser.ConnectionId, JSON.stringify(answer));
+      .invoke("SendAnswerToUser", connectionWithUser.otherUser.connectionId, JSON.stringify(answer));
   }
 
   // Метод получения ответа от пользователя
@@ -165,14 +176,14 @@ export class WebRtcService {
 
   // Метод находит, а если не нашел - то создает экземпляр подключения к пользователю
   private async findOrCreateUserConnectionByUserId(userId: string): Promise<UserConnection> {
-    let userConnection = this.connections.find(c => c.otherUser.ConnectionId === userId);
+    let userConnection = this.connections.find(c => c.otherUser.connectionId === userId);
 
     if (!userConnection) {
       let rtcConnectionWithUser = new RTCPeerConnection(this.rtcConfiguration);
 
       let otherUserName = await this.currentUserHubConnection!.invoke<string>("GetUserName", userId);
 
-      userConnection = new UserConnection({ ConnectionId: userId, Name: otherUserName }, rtcConnectionWithUser);
+      userConnection = new UserConnection({ connectionId: userId, name: otherUserName }, rtcConnectionWithUser);
       this.connections.push(userConnection);
       this.connectionsBehaviorSubject.next(this.connections);
 
@@ -201,7 +212,7 @@ export class WebRtcService {
   private async disconnectUser(userId: string) {
     console.log("Ищем пользователя с Id " + userId + ", чтоб отключить");
 
-    let index = this.connections.findIndex(c => c.otherUser.ConnectionId === userId);
+    let index = this.connections.findIndex(c => c.otherUser.connectionId === userId);
     if (index > -1) {
       console.log("Отключаем пользователя " + userId);
       this.connections.splice(index, 1);
@@ -229,5 +240,14 @@ export class WebRtcService {
   startAudio(){
     let audioTracks = this.localStream?.getAudioTracks();
     if(audioTracks) audioTracks.forEach(track => track.enabled = true);
+  }
+
+  async sendMessage(messageText: string, roomId: string) {
+    await this.currentUserHubConnection!.invoke("SendChatMessage", messageText, roomId);
+  }
+
+  async receiveChatMessages(roomId: string, roomMessages: ChatMessage[]) {
+    this.chatMessages = roomMessages;
+    this.chatMessagesBehaviorSubject.next(this.chatMessages);
   }
 }

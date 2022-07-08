@@ -14,7 +14,7 @@
          [style.width.px]="getCameraWidth(scenery.offsetWidth, scenery.offsetHeight)"
          [style.height.px]="getCameraHeight(scenery.offsetWidth, scenery.offsetHeight)" class="camera">
       <video class="video" *ngIf="user.otherUserMediaStream" [srcObject]="user.otherUserMediaStream" [muted]="false" autoplay playsinline></video>
-      <div class="overlay">{{user.otherUser.Name}}</div>
+      <div class="overlay">{{user.otherUser.name}}</div>
     </div>
   </div>
   <app-controls></app-controls>

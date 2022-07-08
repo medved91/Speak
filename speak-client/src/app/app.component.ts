@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  serviceName = 'Speak';
+  serviceName = 'face-2-face';
 }

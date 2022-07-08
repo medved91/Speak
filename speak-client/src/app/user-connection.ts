@@ -1,4 +1,4 @@
-import {User} from "../User";
+import {User} from "./user";
 
 export class UserConnection {
   otherUserMediaStream: MediaStream = new MediaStream();

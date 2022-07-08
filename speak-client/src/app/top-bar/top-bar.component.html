@@ -1,3 +1,8 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" >
+  <span class="spacer"></span>
   <span>{{serviceName}}</span>
+  <span class="spacer"></span>
+  <button *ngIf="webRtcService.userCompletedJoinSetup" mat-icon-button class="chat-icon" aria-label="Chat" (click)="switchChat()">
+    <mat-icon>chat</mat-icon>
+  </button>
 </mat-toolbar>

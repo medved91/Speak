@@ -1,0 +1,37 @@
+<div class="chat-window" *ngIf="webRtcService.chatOpened">
+  <mat-card class="chat-container-card mat-elevation-z24">
+
+    <div class="chat-messages">
+      <mat-card-content>
+
+        <div *ngFor="let message of currentRoomMessages" class="bubbleWrapper">
+          <span [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+            {{message.fromUser.name}}
+          </span>
+          <div [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'inlineContainer own' : 'inlineContainer'">
+            <div [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'ownBubble own' : 'otherBubble other'">
+              {{message.messageText}}
+            </div>
+          </div>
+          <span [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+            {{message.postedAt | date:'shortTime'}}
+          </span>
+        </div>
+
+      </mat-card-content>
+    </div>
+
+    <mat-card-actions>
+      <div class="message-input">
+        <mat-form-field color="accent" appearance="outline">
+          <mat-label>Введи сообщение</mat-label>
+          <input matInput content="maximum-scale=1" [(ngModel)]="messageToSend">
+        </mat-form-field>
+        <button mat-icon-button aria-label="Chat" (click)="sendMessage()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
+

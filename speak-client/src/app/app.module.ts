@@ -19,6 +19,7 @@ import { CallComponent } from './call/call.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { SpecialCharactersDirective } from './special-characters.directive';
 import { ControlsComponent } from './controls/controls.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { ControlsComponent } from './controls/controls.component';
     CallComponent,
     HomePageComponent,
     SpecialCharactersDirective,
-    ControlsComponent
+    ControlsComponent,
+    ChatComponent
   ],
     imports: [
         BrowserModule,

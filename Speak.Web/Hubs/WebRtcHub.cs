@@ -118,6 +118,33 @@ public class WebRtcHub : Hub
             await Clients.Client(user.ConnectionId).SendAsync("SendOfferToUser", Context.ConnectionId);
     }
 
+    /// <summary>
+    /// Метод вызывается фронтом при отправке сообщения пользователем в комнате
+    /// </summary>
+    /// <param name="messageText">Текст отправляемого сообщения</param>
+    /// <param name="roomId">Идентификатор комнаты, в которой отправляют сообщение</param>
+    public async Task SendChatMessage(string messageText, string roomId)
+    {
+        var fromUser = Users.ConnectedUsers.First(u => u.ConnectionId == Context.ConnectionId);
+        var room = Rooms.CreatedRooms.First(r => r.RoomId == roomId);
+        
+        room.ChatMessages.Add(new ChatMessage(fromUser, messageText));
+
+        await Clients.Clients(room.UsersInRoom.Select(u => u.ConnectionId))
+            .SendAsync("ReceiveChatMessages", roomId, room.ChatMessages);
+    }
+
+    /// <summary>
+    /// Метод вызывается клиентом, чтобы получить сообщения в текущей комнате
+    /// </summary>
+    /// <param name="roomId">Комната, из которой получаем сообщения</param>
+    public async Task GetChatMessages(string roomId)
+    {
+        var room = Rooms.CreatedRooms.First(r => r.RoomId == roomId);
+        
+        await Clients.Caller.SendAsync("ReceiveChatMessages", roomId, room.ChatMessages);
+    }
+
     public override Task OnConnectedAsync()
     {
         Users.ConnectedUsers.Add(new User(Context.ConnectionId));
@@ -137,4 +164,6 @@ public class WebRtcHub : Hub
         
         await base.OnDisconnectedAsync(exception);
     }
+    
+    
 }
