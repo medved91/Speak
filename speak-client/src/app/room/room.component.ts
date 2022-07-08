@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WebRtcService } from "../web-rtc.service";
+import {HubConnectionService} from "../hub-connection.service";
 
 @Component({
   selector: 'app-room',
@@ -8,8 +9,9 @@ import { WebRtcService } from "../web-rtc.service";
 })
 export class RoomComponent implements OnInit {
 
-  constructor(public webRtcService: WebRtcService) { }
+  constructor(private hubConnectionService: HubConnectionService, public webRtcService: WebRtcService) { }
 
   async ngOnInit(): Promise<void> {
+    await this.hubConnectionService.connectToHub();
   }
 }

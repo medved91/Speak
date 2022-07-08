@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "",
-      "applicationUrl": "https://192.168.0.106:443",
+      "applicationUrl": "https://localhost:443",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

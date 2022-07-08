@@ -5,15 +5,15 @@
       <mat-card-content>
 
         <div *ngFor="let message of currentRoomMessages" class="bubbleWrapper">
-          <span [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+          <span [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
             {{message.fromUser.name}}
           </span>
-          <div [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'inlineContainer own' : 'inlineContainer'">
-            <div [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'ownBubble own' : 'otherBubble other'">
+          <div [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'inlineContainer own' : 'inlineContainer'">
+            <div [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'ownBubble own' : 'otherBubble other'">
               {{message.messageText}}
             </div>
           </div>
-          <span [ngClass]="webRtcService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+          <span [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
             {{message.postedAt | date:'shortTime'}}
           </span>
         </div>
@@ -25,7 +25,7 @@
       <div class="message-input">
         <mat-form-field color="accent" appearance="outline">
           <mat-label>Введи сообщение</mat-label>
-          <input matInput content="maximum-scale=1" [(ngModel)]="messageToSend">
+          <input matInput content="maximum-scale=1" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage()">
         </mat-form-field>
         <button mat-icon-button aria-label="Chat" (click)="sendMessage()">
           <mat-icon>send</mat-icon>

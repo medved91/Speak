@@ -14,7 +14,7 @@
 .cameras-dish {
   overflow: scroll;
   display: flex;
-  align-content: start;
+  align-content: flex-start;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -76,6 +76,7 @@ video {
   -moz-transition: margin-top 1s ease-in-out;
   -o-transition: margin-top 1s ease-in-out;
   transition: margin-top 1s ease-in-out;
+  animation: show 0.4s ease;
 }
 
 /* Анимация появления камер */

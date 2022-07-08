@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { UserConnection } from "./user-connection";
 import { BehaviorSubject } from "rxjs";
-import {ChatMessage} from "./chat-message";
+import { ChatMessage } from "./chat-message";
+import {HubConnectionService} from "./hub-connection.service";
 
 @Injectable({ providedIn: 'root' })
 export class WebRtcService {
+  get userJoinedRoom(): boolean {
+    return this._userJoinedRoom;
+  }
+
+  private set userJoinedRoom(value: boolean) {
+    this._userJoinedRoom = value;
+  }
 
   rtcConfiguration: RTCConfiguration = {
     iceServers: [
@@ -37,11 +44,9 @@ export class WebRtcService {
   localStream?: MediaStream;
   localUserName?: string;
 
-  userCompletedJoinSetup = false;
   chatOpened = false;
 
-  private currentUserHubConnection?: HubConnection;
-  currentUserId?: string;
+  private _userJoinedRoom = false;
 
   private chatMessages?: ChatMessage[];
   private chatMessagesBehaviorSubject = new BehaviorSubject<ChatMessage[]>([]);
@@ -51,85 +56,64 @@ export class WebRtcService {
   private connectionsBehaviorSubject = new BehaviorSubject<UserConnection[]>([]);
   public connectionsObservable = this.connectionsBehaviorSubject.asObservable();
 
-  constructor() {
+  constructor(private hubConnectionService: HubConnectionService) {
     console.log("Инициализация WebRtcService");
-    this.currentUserHubConnection = new HubConnectionBuilder()
-      .withUrl('https://192.168.0.106:443/signallingHub')
-      //.withUrl('https://facetoface.tech/signallingHub')
-      .withAutomaticReconnect()
-      .configureLogging(LogLevel.Debug)
-      .build();
 
     // Бэк вызывает этот метод у всех других клиентов, когда пользователь оповещает всех о своем подключении с помощью метода "NotifyOthersAboutNewUser"
-    this.currentUserHubConnection.on("SendOfferToUser", async (toUserConnectionId: string) =>
-      this.sendOfferToUser(toUserConnectionId));
+    this.hubConnectionService.currentUserHubConnection.on("SendOfferToUser",
+      async (toUserConnectionId: string) => this.sendOfferToUser(toUserConnectionId));
 
     // Бэкенд вызовет этот метод при отправке текущему юзеру оффера на подключение
-    this.currentUserHubConnection.on("ReceiveOffer", async (offer: string, fromUserConnectionId: string) =>
-      await this.receiveOfferFromUser(fromUserConnectionId, offer));
+    this.hubConnectionService.currentUserHubConnection.on("ReceiveOffer",
+      async (offer: string, fromUserConnectionId: string) => await this.receiveOfferFromUser(fromUserConnectionId, offer));
 
     // Этот метод будет вызван с бэка при отправке текущему юзеру ответа на оффер
-    this.currentUserHubConnection!.on("ReceiveAnswer", async (answer: string, fromUserId: string) =>
-      await this.receiveAnswerFromUser(fromUserId, answer));
+    this.hubConnectionService.currentUserHubConnection.on("ReceiveAnswer",
+      async (answer: string, fromUserId: string) => await this.receiveAnswerFromUser(fromUserId, answer));
 
     // Метод будет вызван с бэка при отправке текущему юзеру ICE-кандидатов
-    this.currentUserHubConnection!.on("ReceiveIceCandidate", async (iceCandidate: string, fromUserId: string) =>
-      await this.receiveIceCandidateFromUser(fromUserId, iceCandidate));
+    this.hubConnectionService.currentUserHubConnection.on("ReceiveIceCandidate",
+      async (iceCandidate: string, fromUserId: string) => await this.receiveIceCandidateFromUser(fromUserId, iceCandidate));
 
     // Метод будет вызван с бэка при отправке сообщения в чат комнаты
-    this.currentUserHubConnection!.on("ReceiveChatMessages", async (roomId: string, chatMessages: ChatMessage[]) =>
-      await this.receiveChatMessages(roomId, chatMessages));
+    this.hubConnectionService.currentUserHubConnection.on("ReceiveChatMessages",
+      async (roomId: string, chatMessages: ChatMessage[]) => await this.receiveChatMessages(roomId, chatMessages));
 
     // Этот метод вызывается с бэка, когда пользователь отключается
-    this.currentUserHubConnection!.on("DisconnectUser", async (userId: string) =>
-      await this.disconnectUser(userId));
-  }
-
-  /// Метод подключения к Signalling-серверу
-  async startConnection(): Promise<void>{
-    if(this.currentUserHubConnection?.state === 'Connected') return;
-
-    if(!this.localUserName)
-      this.localUserName = "Сегодня у меня нет имени)";
-
-    await this.currentUserHubConnection!.start();
-    console.log('Успешно подключились к Signalling-серверу');
-
-    await this.currentUserHubConnection!.invoke("SetMyName", this.localUserName);
-
-    this.currentUserId = await this.currentUserHubConnection!.invoke<string>("GetConnectionId");
+    this.hubConnectionService.currentUserHubConnection.on("DisconnectUser",
+      async (userId: string) => await this.disconnectUser(userId));
   }
 
   /// Метод подключения пользователя к комнате. Уведомляет остальных пользователей в комнате, провоцируя обмен офферами
   async joinRoom(roomId: string): Promise<void> {
-    await this.currentUserHubConnection?.invoke("AddCurrentUserToRoom", roomId);
-    await this.currentUserHubConnection?.invoke("GetChatMessages", roomId);
-    let otherConnectedUserIds = await this.currentUserHubConnection?.invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);
-    console.log("Получен список других людей в комнате: " + otherConnectedUserIds);
+    this.userJoinedRoom = true;
 
-    if(otherConnectedUserIds?.length === 0) return;
+    await this.hubConnectionService.currentUserHubConnection.invoke("SetMyName", this.localUserName);
+    await this.hubConnectionService.currentUserHubConnection.invoke("AddCurrentUserToRoom", roomId);
+    await this.hubConnectionService.currentUserHubConnection.invoke("GetChatMessages", roomId);
 
-    for (let userId of otherConnectedUserIds!)
-    {
-      console.log("Создаем подключение с пользователем: " + userId);
-      await this.findOrCreateUserConnectionByUserId(userId);
-    }
+    let otherConnectedUserIds = await this.hubConnectionService.currentUserHubConnection
+      .invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);
 
-    await this.currentUserHubConnection?.invoke("NotifyOthersInRoomAboutNewUser", roomId);
+    if(otherConnectedUserIds.length === 0) return;
+
+    for (let userId of otherConnectedUserIds) await this.findOrCreateUserConnectionByUserId(userId);
+
+    await this.hubConnectionService.currentUserHubConnection.invoke("NotifyOthersInRoomAboutNewUser", roomId);
   }
 
   // Метод отправки оффера другому пользователю
   private async sendOfferToUser(toUserId: string): Promise<void> {
     let connectionWithUser = await this.findOrCreateUserConnectionByUserId(toUserId);
 
-    this.localStream?.getTracks().forEach(track => connectionWithUser.rtcConnection.addTrack(track, this.localStream!));
+    this.localStream!.getTracks().forEach(track => connectionWithUser.rtcConnection.addTrack(track, this.localStream!));
 
     let offer = await connectionWithUser.rtcConnection.createOffer();
     await connectionWithUser.rtcConnection.setLocalDescription(offer);
 
     await this.registerIceCandidatesEventHandler(connectionWithUser.rtcConnection, toUserId);
 
-    await this.currentUserHubConnection!.invoke("SendOffer", toUserId, JSON.stringify(offer));
+    await this.hubConnectionService.currentUserHubConnection.invoke("SendOffer", toUserId, JSON.stringify(offer));
   }
 
   // Метод получения оффера от другого пользователя
@@ -138,7 +122,7 @@ export class WebRtcService {
 
     let connectionWithUser = await this.findOrCreateUserConnectionByUserId(fromUserConnectionId);
 
-    this.localStream?.getTracks().forEach(track => connectionWithUser.rtcConnection.addTrack(track, this.localStream!));
+    this.localStream!.getTracks().forEach(track => connectionWithUser.rtcConnection.addTrack(track, this.localStream!));
 
     const description: RTCSessionDescriptionInit = JSON.parse(offer);
     await connectionWithUser.rtcConnection.setRemoteDescription(description);
@@ -148,7 +132,7 @@ export class WebRtcService {
 
     await this.registerIceCandidatesEventHandler(connectionWithUser.rtcConnection, fromUserConnectionId);
 
-    await this.currentUserHubConnection!
+    await this.hubConnectionService.currentUserHubConnection
       .invoke("SendAnswerToUser", connectionWithUser.otherUser.connectionId, JSON.stringify(answer));
   }
 
@@ -181,15 +165,12 @@ export class WebRtcService {
     if (!userConnection) {
       let rtcConnectionWithUser = new RTCPeerConnection(this.rtcConfiguration);
 
-      let otherUserName = await this.currentUserHubConnection!.invoke<string>("GetUserName", userId);
+      let otherUserName = await this.hubConnectionService.currentUserHubConnection
+        .invoke<string>("GetUserName", userId);
 
       userConnection = new UserConnection({ connectionId: userId, name: otherUserName }, rtcConnectionWithUser);
       this.connections.push(userConnection);
       this.connectionsBehaviorSubject.next(this.connections);
-
-      console.log("Создано подключение с пользователем: " + userId);
-    } else {
-      console.log("Найдено подключение с пользователем: " + userId);
     }
 
     return userConnection;
@@ -200,7 +181,7 @@ export class WebRtcService {
     rtcConnectionWithUser.onicecandidate = async event => {
       if (event.candidate) {
         console.log('WebRTC: создан новый ICE candidate');
-        await this.currentUserHubConnection!
+        await this.hubConnectionService.currentUserHubConnection
           .invoke("SendIceCandidateToOtherPeer", sendTo, JSON.stringify(event.candidate.toJSON()));
       } else {
         console.log('WebRTC: сбор ICE кандидатов завершен');
@@ -210,15 +191,12 @@ export class WebRtcService {
 
   // Метод отключения пользователя от созвона
   private async disconnectUser(userId: string) {
-    console.log("Ищем пользователя с Id " + userId + ", чтоб отключить");
-
     let index = this.connections.findIndex(c => c.otherUser.connectionId === userId);
     if (index > -1) {
       console.log("Отключаем пользователя " + userId);
       this.connections.splice(index, 1);
-    } else {
-      console.log("Пользователь не найден");
     }
+
     this.connectionsBehaviorSubject.next(this.connections);
   }
 
@@ -243,7 +221,7 @@ export class WebRtcService {
   }
 
   async sendMessage(messageText: string, roomId: string) {
-    await this.currentUserHubConnection!.invoke("SendChatMessage", messageText, roomId);
+    await this.hubConnectionService.currentUserHubConnection.invoke("SendChatMessage", messageText, roomId);
   }
 
   async receiveChatMessages(roomId: string, roomMessages: ChatMessage[]) {

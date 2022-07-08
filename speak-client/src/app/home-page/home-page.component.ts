@@ -10,7 +10,6 @@ export class HomePageComponent implements OnInit {
   roomId: string;
   private seed: string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-
   constructor() {
     this.roomId = HomePageComponent.randomString(15, this.seed);
   }

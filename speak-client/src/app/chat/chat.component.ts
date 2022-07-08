@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {WebRtcService} from "../web-rtc.service";
 import {ActivatedRoute} from "@angular/router";
 import {ChatMessage} from "../chat-message";
+import {HubConnectionService} from "../hub-connection.service";
 
 @Component({
   selector: 'app-chat',
@@ -15,7 +16,7 @@ export class ChatComponent implements OnInit {
 
   messageToSend?: string;
 
-  constructor(public route: ActivatedRoute, public webRtcService: WebRtcService) { }
+  constructor(public route: ActivatedRoute, public hubConnectionService: HubConnectionService, public webRtcService: WebRtcService) { }
 
   async ngOnInit(): Promise<void> {
     let id = this.route.snapshot.paramMap.get('id');

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {WebRtcService} from "../web-rtc.service";
+import { WebRtcService } from "../web-rtc.service";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-join-setup',
@@ -7,14 +8,18 @@ import {WebRtcService} from "../web-rtc.service";
   styleUrls: ['./join-setup.component.css']
 })
 export class JoinSetupComponent implements OnInit {
+  private readonly currentRoomId: string;
 
-  constructor(public webRtcService: WebRtcService) { }
+  constructor(public route: ActivatedRoute, public webRtcService: WebRtcService) {
+    let id = this.route.snapshot.paramMap.get('id');
+    this.currentRoomId = id!;
+  }
 
   async ngOnInit(): Promise<void> {
     this.webRtcService.localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
   }
 
-  joinCall() {
-    this.webRtcService.userCompletedJoinSetup = true;
+  async joinCall() {
+    await this.webRtcService.joinRoom(this.currentRoomId);
   }
 }

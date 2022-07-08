@@ -20,7 +20,7 @@
       <p *ngIf="webRtcService.localStream">
         <mat-form-field color="accent" appearance="outline">
           <mat-label>Как тебя зовут?</mat-label>
-          <input matInput placeholder="Мое имя" [(ngModel)]="webRtcService.localUserName" content="maximum-scale=1">
+          <input matInput placeholder="Мое имя" [(ngModel)]="webRtcService.localUserName" (keyup.enter)="joinCall()" content="maximum-scale=1">
           <mat-icon matSuffix>person</mat-icon>
           <mat-hint>Используй любые символы</mat-hint>
         </mat-form-field>
