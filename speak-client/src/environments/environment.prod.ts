@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  hubUrl: "https://facetoface.tech/signallingHub"
+  hubUrl: "https://face-2-face.ru/signallingHub"
 };
