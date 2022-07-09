@@ -6,8 +6,8 @@
   <div class="cameras-dish">
     <div [style.width.px]="getCameraWidth(scenery.offsetWidth, scenery.offsetHeight)"
          [style.height.px]="getCameraHeight(scenery.offsetWidth, scenery.offsetHeight)" class="camera">
-      <video class="video" *ngIf="webRtcService.localStream" [srcObject]="webRtcService.localStream" [muted]="true" autoplay playsinline></video>
-      <div class="overlay">{{webRtcService.localUserName}}</div>
+      <video class="video" *ngIf="localStream" [srcObject]="localStream" [muted]="true" autoplay playsinline></video>
+      <div class="overlay">{{localUserName}}</div>
     </div>
 
     <div *ngFor="let user of otherUserConnections"

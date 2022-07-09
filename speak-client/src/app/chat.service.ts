@@ -7,6 +7,10 @@ import { BehaviorSubject } from "rxjs";
   providedIn: 'root'
 })
 export class ChatService {
+  get currentUserId(){
+    return this.hubConnectionService.currentUserId;
+  }
+
   chatOpened = false;
 
   private chatMessages?: ChatMessage[];

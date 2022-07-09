@@ -9,14 +9,20 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./call.component.css']
 })
 export class CallComponent implements OnInit {
+  get localStream() {
+    return this.webRtcService.localStream;
+  }
+
+  get localUserName(){
+    return this.webRtcService.localUserName;
+  }
+
   currentRoomId!: string;
   otherUserConnections: UserConnection[] = [];
 
-  constructor(public route: ActivatedRoute, public webRtcService: WebRtcService) { }
+  constructor(private route: ActivatedRoute, private webRtcService: WebRtcService) { }
 
   async ngOnInit(): Promise<void> {
-
-
     this.webRtcService.connectionsObservable
       .subscribe(connections => this.otherUserConnections = connections);
   }

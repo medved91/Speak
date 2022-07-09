@@ -1,19 +1,19 @@
-<div class="chat-window" *ngIf="chatService.chatOpened">
+<div class="chat-window" *ngIf="chatOpened">
   <mat-card class="chat-container-card mat-elevation-z24">
 
     <div class="chat-messages">
       <mat-card-content>
 
         <div *ngFor="let message of currentRoomMessages" class="bubbleWrapper">
-          <span [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+          <span [ngClass]="currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
             {{message.fromUser.name}}
           </span>
-          <div [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'inlineContainer own' : 'inlineContainer'">
-            <div [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'ownBubble own' : 'otherBubble other'">
+          <div [ngClass]="currentUserId === message.fromUser.connectionId ? 'inlineContainer own' : 'inlineContainer'">
+            <div [ngClass]="currentUserId === message.fromUser.connectionId ? 'ownBubble own' : 'otherBubble other'">
               {{message.messageText}}
             </div>
           </div>
-          <span [ngClass]="hubConnectionService.currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
+          <span [ngClass]="currentUserId === message.fromUser.connectionId ? 'own' : 'other'">
             {{message.postedAt | date:'shortTime'}}
           </span>
         </div>

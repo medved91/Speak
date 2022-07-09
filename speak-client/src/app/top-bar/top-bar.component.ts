@@ -8,10 +8,13 @@ import { ChatService } from "../chat.service";
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent implements OnInit {
+  get userJoinedRoom(){
+    return this.webRtcService.userJoinedRoom;
+  }
 
   @Input() serviceName?: string;
 
-  constructor(public webRtcService: WebRtcService, private chatService: ChatService) { }
+  constructor(private webRtcService: WebRtcService, private chatService: ChatService) { }
 
   ngOnInit(): void { }
 

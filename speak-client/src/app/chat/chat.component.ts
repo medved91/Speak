@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { ChatMessage } from "../chat-message";
-import { HubConnectionService } from "../hub-connection.service";
 import { ChatService } from "../chat.service";
 
 @Component({
@@ -10,13 +9,20 @@ import { ChatService } from "../chat.service";
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  get chatOpened() {
+    return this.chatService.chatOpened;
+  }
+
+  get currentUserId() {
+    return this.chatService.currentUserId;
+  }
 
   private currentRoomId?: string;
   currentRoomMessages?: ChatMessage[];
 
   messageToSend?: string;
 
-  constructor(public route: ActivatedRoute, public hubConnectionService: HubConnectionService, public chatService: ChatService) { }
+  constructor(private route: ActivatedRoute, private chatService: ChatService) { }
 
   async ngOnInit(): Promise<void> {
     let id = this.route.snapshot.paramMap.get('id');
@@ -24,8 +30,6 @@ export class ChatComponent implements OnInit {
 
     this.chatService.chatMessagesObservable
       .subscribe(chatMessages => this.currentRoomMessages = chatMessages);
-
-    await this.chatService.loadCurrentRoomChatMessages(this.currentRoomId);
   }
 
   async sendMessage() {

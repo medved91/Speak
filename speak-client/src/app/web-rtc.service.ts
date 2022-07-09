@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserConnection } from "./user-connection";
 import { BehaviorSubject } from "rxjs";
 import { HubConnectionService } from "./hub-connection.service";
+import { ChatService } from "./chat.service";
 
 @Injectable({ providedIn: 'root' })
 export class WebRtcService {
@@ -49,7 +50,7 @@ export class WebRtcService {
   private connectionsBehaviorSubject = new BehaviorSubject<UserConnection[]>([]);
   public connectionsObservable = this.connectionsBehaviorSubject.asObservable();
 
-  constructor(private hubConnectionService: HubConnectionService) {
+  constructor(private hubConnectionService: HubConnectionService, private chatService: ChatService) {
     console.log("Инициализация WebRtcService");
 
     // Бэк вызывает этот метод у всех других клиентов, когда пользователь оповещает всех о своем подключении с помощью метода "NotifyOthersAboutNewUser"
@@ -79,6 +80,8 @@ export class WebRtcService {
 
     await this.hubConnectionService.currentUserHubConnection.invoke("SetMyName", this.localUserName);
     await this.hubConnectionService.currentUserHubConnection.invoke("AddCurrentUserToRoom", roomId);
+
+    await this.chatService.loadCurrentRoomChatMessages(roomId);
 
     let otherConnectedUserIds = await this.hubConnectionService.currentUserHubConnection
       .invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);

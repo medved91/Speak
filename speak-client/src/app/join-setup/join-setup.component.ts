@@ -8,9 +8,21 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ['./join-setup.component.css']
 })
 export class JoinSetupComponent implements OnInit {
+  get localStream() {
+    return this.webRtcService.localStream;
+  }
+
+  get localUserName(){
+    return this.webRtcService.localUserName;
+  }
+
+  set localUserName(value){
+    this.webRtcService.localUserName = value;
+  }
+
   private readonly currentRoomId: string;
 
-  constructor(public route: ActivatedRoute, public webRtcService: WebRtcService) {
+  constructor(private route: ActivatedRoute, private webRtcService: WebRtcService) {
     let id = this.route.snapshot.paramMap.get('id');
     this.currentRoomId = id!;
   }
