@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WebRtcService } from "../web-rtc.service";
-import {HubConnectionService} from "../hub-connection.service";
+import { HubConnectionService } from "../hub-connection.service";
 
 @Component({
   selector: 'app-room',

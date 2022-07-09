@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {WebRtcService} from "../web-rtc.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { WebRtcService } from "../web-rtc.service";
+import { ChatService } from "../chat.service";
 
 @Component({
   selector: 'app-top-bar',
@@ -10,13 +11,11 @@ export class TopBarComponent implements OnInit {
 
   @Input() serviceName?: string;
 
-  constructor(public webRtcService: WebRtcService) { }
+  constructor(public webRtcService: WebRtcService, private chatService: ChatService) { }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void { }
 
   switchChat() {
-    this.webRtcService.chatOpened = !this.webRtcService.chatOpened;
+    this.chatService.chatOpened = !this.chatService.chatOpened;
   }
 }

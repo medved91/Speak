@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-home-page',
@@ -10,7 +11,7 @@ export class HomePageComponent implements OnInit {
   roomId: string;
   private seed: string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  constructor() {
+  constructor(private router: Router) {
     this.roomId = HomePageComponent.randomString(15, this.seed);
   }
 
@@ -24,4 +25,7 @@ export class HomePageComponent implements OnInit {
     return result;
   }
 
+  async joinRoom() {
+    await this.router.navigateByUrl('/room/' + this.roomId);
+  }
 }

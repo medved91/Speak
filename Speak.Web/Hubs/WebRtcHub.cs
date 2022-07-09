@@ -161,9 +161,7 @@ public class WebRtcHub : Hub
         foreach (var room in roomsWithUser) room.UsersInRoom.Remove(userToRemove);
 
         await Clients.Others.SendAsync("DisconnectUser", Context.ConnectionId);
-        
+
         await base.OnDisconnectedAsync(exception);
     }
-    
-    
 }

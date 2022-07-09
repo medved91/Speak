@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserConnection } from "./user-connection";
 import { BehaviorSubject } from "rxjs";
-import { ChatMessage } from "./chat-message";
-import {HubConnectionService} from "./hub-connection.service";
+import { HubConnectionService } from "./hub-connection.service";
 
 @Injectable({ providedIn: 'root' })
 export class WebRtcService {
@@ -44,13 +43,7 @@ export class WebRtcService {
   localStream?: MediaStream;
   localUserName?: string;
 
-  chatOpened = false;
-
   private _userJoinedRoom = false;
-
-  private chatMessages?: ChatMessage[];
-  private chatMessagesBehaviorSubject = new BehaviorSubject<ChatMessage[]>([]);
-  public chatMessagesObservable = this.chatMessagesBehaviorSubject.asObservable();
 
   private connections: UserConnection[] = [];
   private connectionsBehaviorSubject = new BehaviorSubject<UserConnection[]>([]);
@@ -75,10 +68,6 @@ export class WebRtcService {
     this.hubConnectionService.currentUserHubConnection.on("ReceiveIceCandidate",
       async (iceCandidate: string, fromUserId: string) => await this.receiveIceCandidateFromUser(fromUserId, iceCandidate));
 
-    // Метод будет вызван с бэка при отправке сообщения в чат комнаты
-    this.hubConnectionService.currentUserHubConnection.on("ReceiveChatMessages",
-      async (roomId: string, chatMessages: ChatMessage[]) => await this.receiveChatMessages(roomId, chatMessages));
-
     // Этот метод вызывается с бэка, когда пользователь отключается
     this.hubConnectionService.currentUserHubConnection.on("DisconnectUser",
       async (userId: string) => await this.disconnectUser(userId));
@@ -90,7 +79,6 @@ export class WebRtcService {
 
     await this.hubConnectionService.currentUserHubConnection.invoke("SetMyName", this.localUserName);
     await this.hubConnectionService.currentUserHubConnection.invoke("AddCurrentUserToRoom", roomId);
-    await this.hubConnectionService.currentUserHubConnection.invoke("GetChatMessages", roomId);
 
     let otherConnectedUserIds = await this.hubConnectionService.currentUserHubConnection
       .invoke<string[]>("GetOtherConnectedUsersInRoom", roomId);
@@ -198,34 +186,5 @@ export class WebRtcService {
     }
 
     this.connectionsBehaviorSubject.next(this.connections);
-  }
-
-  stopVideo(){
-    let videoTracks = this.localStream?.getVideoTracks();
-    if(videoTracks) videoTracks.forEach(track => track.enabled = false);
-  }
-
-  stopAudio(){
-    let audioTracks = this.localStream?.getAudioTracks();
-    if(audioTracks) audioTracks.forEach(track => track.enabled = false);
-  }
-
-  startVideo(){
-    let videoTracks = this.localStream?.getVideoTracks();
-    if(videoTracks) videoTracks.forEach(track => track.enabled = true);
-  }
-
-  startAudio(){
-    let audioTracks = this.localStream?.getAudioTracks();
-    if(audioTracks) audioTracks.forEach(track => track.enabled = true);
-  }
-
-  async sendMessage(messageText: string, roomId: string) {
-    await this.hubConnectionService.currentUserHubConnection.invoke("SendChatMessage", messageText, roomId);
-  }
-
-  async receiveChatMessages(roomId: string, roomMessages: ChatMessage[]) {
-    this.chatMessages = roomMessages;
-    this.chatMessagesBehaviorSubject.next(this.chatMessages);
   }
 }

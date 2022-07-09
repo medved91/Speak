@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {WebRtcService} from "../web-rtc.service";
+import { WebRtcService } from "../web-rtc.service";
 
 @Component({
   selector: 'app-controls',
@@ -18,19 +18,40 @@ export class ControlsComponent implements OnInit {
 
   switchMic() {
     if(this.micEnabled)
-      this.webRtcService.stopAudio();
+      this.stopAudio();
     else
-      this.webRtcService.startAudio();
+      this.startAudio();
 
     this.micEnabled = !this.micEnabled;
   }
 
   switchCam() {
     if(this.camEnabled)
-      this.webRtcService.stopVideo();
+      this.stopVideo();
     else
-      this.webRtcService.startVideo();
+      this.startVideo();
 
     this.camEnabled = !this.camEnabled;
+  }
+
+
+  private stopVideo(){
+    let videoTracks = this.webRtcService.localStream?.getVideoTracks();
+    if(videoTracks) videoTracks.forEach(track => track.enabled = false);
+  }
+
+  private stopAudio(){
+    let audioTracks = this.webRtcService.localStream?.getAudioTracks();
+    if(audioTracks) audioTracks.forEach(track => track.enabled = false);
+  }
+
+  private startVideo(){
+    let videoTracks = this.webRtcService.localStream?.getVideoTracks();
+    if(videoTracks) videoTracks.forEach(track => track.enabled = true);
+  }
+
+  private startAudio(){
+    let audioTracks = this.webRtcService.localStream?.getAudioTracks();
+    if(audioTracks) audioTracks.forEach(track => track.enabled = true);
   }
 }

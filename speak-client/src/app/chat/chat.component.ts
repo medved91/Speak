@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {WebRtcService} from "../web-rtc.service";
-import {ActivatedRoute} from "@angular/router";
-import {ChatMessage} from "../chat-message";
-import {HubConnectionService} from "../hub-connection.service";
+import { ActivatedRoute } from "@angular/router";
+import { ChatMessage } from "../chat-message";
+import { HubConnectionService } from "../hub-connection.service";
+import { ChatService } from "../chat.service";
 
 @Component({
   selector: 'app-chat',
@@ -16,19 +16,21 @@ export class ChatComponent implements OnInit {
 
   messageToSend?: string;
 
-  constructor(public route: ActivatedRoute, public hubConnectionService: HubConnectionService, public webRtcService: WebRtcService) { }
+  constructor(public route: ActivatedRoute, public hubConnectionService: HubConnectionService, public chatService: ChatService) { }
 
   async ngOnInit(): Promise<void> {
     let id = this.route.snapshot.paramMap.get('id');
     this.currentRoomId = id!;
 
-    this.webRtcService.chatMessagesObservable
+    this.chatService.chatMessagesObservable
       .subscribe(chatMessages => this.currentRoomMessages = chatMessages);
+
+    await this.chatService.loadCurrentRoomChatMessages(this.currentRoomId);
   }
 
   async sendMessage() {
     if (this.messageToSend && this.currentRoomId)
-      await this.webRtcService.sendMessage(this.messageToSend, this.currentRoomId);
+      await this.chatService.sendMessage(this.messageToSend, this.currentRoomId);
 
     this.messageToSend = '';
   }
