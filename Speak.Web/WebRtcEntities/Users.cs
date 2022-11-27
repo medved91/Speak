@@ -1,4 +1,4 @@
-namespace Speak.Web;
+namespace Speak.Web.WebRtcEntities;
 
 public static class Users
 {

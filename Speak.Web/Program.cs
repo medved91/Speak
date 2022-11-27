@@ -1,4 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
+using Speak.TelegramBot;
 using Speak.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +14,15 @@ builder.WebHost.ConfigureKestrel(o =>
 // Add services to the container.
 var allowedOrigings = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 builder.Services
+    .AddBot(builder.Configuration)
     .AddCors(options => options
         .AddPolicy("CorsPolicy", policyBuilder => policyBuilder
             .WithOrigins(allowedOrigings)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()))
-    .AddControllers();
+    .AddControllers()
+    .AddNewtonsoftJson();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services
@@ -34,6 +37,12 @@ if (app.Environment.IsDevelopment()) app.UseSwagger().UseSwaggerUI();
 
 app
     .UseHttpsRedirection()
+    .UseRouting()
+    .UseCors("CorsPolicy")
+    .UseEndpoints(endpoints => endpoints
+        .MapBotRoute(builder.Configuration)
+        .MapControllers())
+    .UseAuthorization()
     .UseDefaultFiles()
     .UseStaticFiles(new StaticFileOptions
     {
@@ -42,12 +51,8 @@ app
             var headers = context.Context.Response.GetTypedHeaders();
             headers.CacheControl = new() { Public = true, MaxAge = TimeSpan.FromMinutes(1) };
         }
-    })
-    .UseRouting()
-    .UseCors("CorsPolicy")
-    .UseAuthorization();
+    });
 
-app.MapControllers();
 app.MapHub<WebRtcHub>("/signallingHub");
 app.MapFallbackToFile("index.html");
 

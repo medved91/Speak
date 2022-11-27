@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Web", "Speak.Web\Speak.Web.csproj", "{FE6DC957-5B8B-4A06-BFB1-389F515C1EEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.TelegramBot", "Speak.TelegramBot\Speak.TelegramBot.csproj", "{FF1076CF-12FA-4746-9909-C3B34A34228F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,11 @@ Global
 		{FE6DC957-5B8B-4A06-BFB1-389F515C1EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE6DC957-5B8B-4A06-BFB1-389F515C1EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE6DC957-5B8B-4A06-BFB1-389F515C1EEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

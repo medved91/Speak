@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Speak.Web.WebRtcEntities;
 
 namespace Speak.Web.Hubs;
 
