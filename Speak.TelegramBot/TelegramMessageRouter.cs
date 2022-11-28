@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -42,10 +43,10 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     {
         _logger.LogInformation("Получено сообщение с типом: {MessageType}", message.Type);
         if (message.Type != MessageType.Text) return;
-
+        
         var action = message.Text!.Split(' ')[0] switch
         {
-            "/pepe" => SendPepe(message),
+            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => SendPepe(message),
             _ => Usage(message)
         };
         
