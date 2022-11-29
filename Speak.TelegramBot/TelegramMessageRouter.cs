@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Speak.TelegramBot.FeatureHandlers;
+using Speak.TelegramBot.FeatureRequests;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Speak.TelegramBot;
@@ -14,10 +15,15 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private readonly ITelegramBotClient _botClient;
     private readonly ILogger<TelegramMessageRouter> _logger;
 
-    public TelegramMessageRouter(ITelegramBotClient botClient, ILogger<TelegramMessageRouter> logger)
+    private readonly ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message> _pepePickerFeatureHandler;
+
+    public TelegramMessageRouter(ITelegramBotClient botClient, 
+        ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message> pepePickerFeatureHandler, 
+        ILogger<TelegramMessageRouter> logger)
     {
         _botClient = botClient;
         _logger = logger;
+        _pepePickerFeatureHandler = pepePickerFeatureHandler;
     }
 
     public async Task HandleNewMessageAsync(Update update)
@@ -46,30 +52,15 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
         
         var action = message.Text!.Split(' ')[0] switch
         {
-            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => SendPepe(message),
+            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => 
+                _pepePickerFeatureHandler.Handle(new PickWhichPepeIAmTodayRequest(message.Chat.Id)),
             _ => Usage(message)
         };
         
         var sentMessage = await action;
         _logger.LogInformation("Отправлено сообщение с id: {SentMessageId}", sentMessage.MessageId);
     }
-    
-    private async Task<Message> SendPepe(Message message)
-    {
-        await _botClient.SendChatActionAsync(message.Chat.Id, ChatAction.UploadPhoto);
-            
-        var random = new Random();
-        var files = Directory.GetFiles("Files");
-        var randomPepeFilePath = files[random.Next(files.Length)];
 
-        await using FileStream fileStream = new(randomPepeFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var fileName = randomPepeFilePath.Split(Path.DirectorySeparatorChar).Last();
-
-        return await _botClient.SendPhotoAsync(message.Chat.Id,
-            new InputOnlineFile(fileStream, fileName),
-            $"Держи, вот твой Пепе");
-    }
-    
     private async Task<Message> Usage(Message message)
     {
         const string usage = "Команды:\n" +

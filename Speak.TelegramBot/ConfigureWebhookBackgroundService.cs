@@ -7,13 +7,13 @@ using Telegram.Bot.Types.Enums;
 
 namespace Speak.TelegramBot;
 
-internal class ConfigureWebhook : IHostedService
+internal class ConfigureWebhookBackgroundService : IHostedService
 {
-    private readonly ILogger<ConfigureWebhook> _logger;
+    private readonly ILogger<ConfigureWebhookBackgroundService> _logger;
     private readonly IServiceProvider _services;
     private readonly BotConfiguration _configuration;
 
-    public ConfigureWebhook(ILogger<ConfigureWebhook> logger,
+    public ConfigureWebhookBackgroundService(ILogger<ConfigureWebhookBackgroundService> logger,
         IServiceProvider serviceProvider,
         IOptions<BotConfiguration> configuration)
     {

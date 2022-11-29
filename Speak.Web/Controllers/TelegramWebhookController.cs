@@ -14,13 +14,12 @@ public class TelegramWebhookController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromServices] ITelegramMessageRouter handleUpdateService,
+    public async Task<IActionResult> Post([FromServices] ITelegramMessageRouter messageRouter,
         [FromBody] Update update)
     {
-        //TODO: Прикрутить серилог, а то @ не работает
-        _logger.LogInformation("Получено сообщение боту Telegram: {@MessageBody}", update);
+        _logger.LogInformation("Получено сообщение из Telegram: {@MessageBody}", update);
         
-        await handleUpdateService.HandleNewMessageAsync(update);
+        await messageRouter.HandleNewMessageAsync(update);
         return Ok();
     }
 }

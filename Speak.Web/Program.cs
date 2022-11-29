@@ -1,17 +1,25 @@
 using System.Security.Cryptography.X509Certificates;
+using Serilog;
 using Speak.TelegramBot;
 using Speak.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(o => 
-    o.ListenAnyIP(443, options =>
-    {
-        options.UseHttps(d => 
-            d.ServerCertificate = X509Certificate2.CreateFromPemFile("cert.crt", "private.key")); 
-    }));
+builder.Host.UseSerilog();
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.WebHost
+    .ConfigureKestrel(o =>
+        o.ListenAnyIP(443, options =>
+        {
+            options.UseHttps(d =>
+                d.ServerCertificate = X509Certificate2.CreateFromPemFile("cert.crt", "private.key"));
+        }));
+
+// Регистрация сервисов
 var allowedOrigings = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 builder.Services
     .AddBot(builder.Configuration)
@@ -24,7 +32,6 @@ builder.Services
     .AddControllers()
     .AddNewtonsoftJson();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
@@ -32,7 +39,7 @@ builder.Services
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Пайплайн HTTP реквестов
 if (app.Environment.IsDevelopment()) app.UseSwagger().UseSwaggerUI();
 
 app
@@ -56,4 +63,15 @@ app
 app.MapHub<WebRtcHub>("/signallingHub");
 app.MapFallbackToFile("index.html");
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Приложение неожиданно завершилось...");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Web", "Speak.Web\Spea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.TelegramBot", "Speak.TelegramBot\Speak.TelegramBot.csproj", "{FF1076CF-12FA-4746-9909-C3B34A34228F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.WebRtc", "Speak.WebRtc\Speak.WebRtc.csproj", "{1E1A4373-ACA1-4E9B-B09D-0C9D376EBFA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF1076CF-12FA-4746-9909-C3B34A34228F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E1A4373-ACA1-4E9B-B09D-0C9D376EBFA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E1A4373-ACA1-4E9B-B09D-0C9D376EBFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E1A4373-ACA1-4E9B-B09D-0C9D376EBFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E1A4373-ACA1-4E9B-B09D-0C9D376EBFA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

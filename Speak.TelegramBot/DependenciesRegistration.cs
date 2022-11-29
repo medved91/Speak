@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Speak.TelegramBot.FeatureHandlers;
+using Speak.TelegramBot.FeatureRequests;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Speak.TelegramBot;
 
@@ -22,8 +25,10 @@ public static class DependenciesRegistration
             .AddTypedClient<ITelegramBotClient>(httpClient => 
                 new TelegramBotClient(botConfiguration!.Token, httpClient));
 
+        services.AddHostedService<ConfigureWebhookBackgroundService>();
         services.AddScoped<ITelegramMessageRouter, TelegramMessageRouter>();
-        services.AddHostedService<ConfigureWebhook>();
+
+        services.AddTeleramFeatures();
 
         return services;
     }
@@ -38,5 +43,11 @@ public static class DependenciesRegistration
             new { controller = "TelegramWebhook", action = "Post" });
 
         return routes;
+    }
+
+    private static void AddTeleramFeatures(this IServiceCollection services)
+    {
+        services
+            .AddScoped<ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message>, PickWhichPepeIAmTodayHandler>();
     }
 }
