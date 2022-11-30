@@ -140,4 +140,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Speak.Storage\Speak.Storage.csproj" />
+    </ItemGroup>
+
 </Project>

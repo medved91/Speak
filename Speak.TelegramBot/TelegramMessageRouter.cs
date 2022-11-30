@@ -15,10 +15,10 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private readonly ITelegramBotClient _botClient;
     private readonly ILogger<TelegramMessageRouter> _logger;
 
-    private readonly ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message> _pepePickerFeatureHandler;
+    private readonly ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> _pepePickerFeatureHandler;
 
     public TelegramMessageRouter(ITelegramBotClient botClient, 
-        ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message> pepePickerFeatureHandler, 
+        ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> pepePickerFeatureHandler, 
         ILogger<TelegramMessageRouter> logger)
     {
         _botClient = botClient;
@@ -52,8 +52,8 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
         
         var action = message.Text!.Split(' ')[0] switch
         {
-            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => 
-                _pepePickerFeatureHandler.Handle(new PickWhichPepeIAmTodayRequest(message.Chat.Id)),
+            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => _pepePickerFeatureHandler
+                .Handle(new PickWhichPepeAmITodayRequest(message.From?.Username, message.Chat.Id, message.MessageId)),
             _ => Usage(message)
         };
         

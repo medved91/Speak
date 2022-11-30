@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Speak.Storage;
+using Speak.TelegramBot.Entities;
 using Speak.TelegramBot.FeatureHandlers;
 using Speak.TelegramBot.FeatureRequests;
+using Speak.TelegramBot.Storage;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+
+[assembly: InternalsVisibleTo("Speak.TelegramBot.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace Speak.TelegramBot;
 
@@ -27,6 +34,7 @@ public static class DependenciesRegistration
 
         services.AddHostedService<ConfigureWebhookBackgroundService>();
         services.AddScoped<ITelegramMessageRouter, TelegramMessageRouter>();
+        services.AddSingleton<IRepository<TodayPepe>, TodayPepesRepository>();
 
         services.AddTeleramFeatures();
 
@@ -48,6 +56,6 @@ public static class DependenciesRegistration
     private static void AddTeleramFeatures(this IServiceCollection services)
     {
         services
-            .AddScoped<ITelegramFeatureHandler<PickWhichPepeIAmTodayRequest, Message>, PickWhichPepeIAmTodayHandler>();
+            .AddScoped<ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message>, PickWhichPepeAmITodayHandler>();
     }
 }
