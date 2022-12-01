@@ -50,13 +50,13 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
         return await PickPepeAndSendMessage(request);
     }
 
-    private async Task<TodayPepe?> GetCurrentUserAlreadyChosenPepe(string username)
+    internal async Task<TodayPepe?> GetCurrentUserAlreadyChosenPepe(string username)
     {
-        var endOfCurrentDay = new DateTimeOffset(DateTime.Now.Date.AddDays(1).AddTicks(-1));
+        var endOfPreviousDay = new DateTimeOffset(DateTime.Now.Date.AddTicks(-1));
         
         var currentUserPepe = await _todayPepesRepo
             .FirstOrDefaultAsync(p => p.Username == username
-                && p.WhenChosen < endOfCurrentDay);
+                && p.WhenChosen > endOfPreviousDay);
         
         return currentUserPepe;
     }

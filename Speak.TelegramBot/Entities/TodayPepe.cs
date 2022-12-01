@@ -2,11 +2,13 @@ namespace Speak.TelegramBot.Entities;
 
 internal class TodayPepe
 {
-    public TodayPepe(string username, string pepeImageFilePath)
+    public TodayPepe(string username, string pepeImageFilePath, DateTimeOffset whenChosen = default)
     {
         Username = username;
         PepeImageFilePath = pepeImageFilePath;
-        WhenChosen = DateTimeOffset.Now;
+        
+        if(whenChosen == default)
+            WhenChosen = DateTimeOffset.Now;
     }
 
     public string Username { get; }

@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using FakeItEasy;
+using FluentAssertions;
 using NUnit.Framework;
 using Speak.Storage;
 using Speak.TelegramBot.Entities;
@@ -11,6 +13,7 @@ using Telegram.Bot;
 
 namespace Speak.TelegramBot.Tests;
 
+[NonParallelizable]
 public class PickWhichPepeAmITodayFeatureHandlerTests
 {
     private PickWhichPepeAmITodayHandler _featureUnderTests = null!;
@@ -47,5 +50,29 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         
         A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe,bool>>._))
             .MustHaveHappenedTwiceExactly();
+    }
+
+    [Test]
+    public void ShouldCorrectlyFindTodaysPepe()
+    {
+        // Arrange
+        var oldPepe = new TodayPepe("username", "path", DateTimeOffset.Now.Date.AddTicks(-2));
+        var newPepe = new TodayPepe("username", "path");
+        var secondOldPepe = new TodayPepe("username", "path", DateTimeOffset.Now.Date.AddTicks(-5));
+        
+        var pepes = new[] { oldPepe, newPepe, secondOldPepe};
+
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._))
+            .ReturnsLazily(cf =>
+            {
+                var predicate = cf.Arguments[0] as Func<TodayPepe, bool>;
+                return Task.FromResult(pepes.FirstOrDefault(predicate));
+            });
+
+        // Act
+        var todaysPepe = _featureUnderTests.GetCurrentUserAlreadyChosenPepe("username").GetAwaiter().GetResult();
+        
+        // Assert
+        todaysPepe.Should().Be(newPepe);
     }
 }
