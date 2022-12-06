@@ -1,4 +1,4 @@
-namespace Speak.TelegramBot.Entities;
+namespace Speak.Telegram.Bot.Entities;
 
 internal class TodayPepe
 {

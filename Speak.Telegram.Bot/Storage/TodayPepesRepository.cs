@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using Speak.Storage;
-using Speak.TelegramBot.Entities;
+using Speak.Telegram.Bot.Entities;
 
-namespace Speak.TelegramBot.Storage;
+namespace Speak.Telegram.Bot.Storage;
 
 internal class TodayPepesRepository : IRepository<TodayPepe>
 {

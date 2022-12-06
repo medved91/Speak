@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Speak.TelegramBot;
+using Speak.Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Speak.Web.Controllers;

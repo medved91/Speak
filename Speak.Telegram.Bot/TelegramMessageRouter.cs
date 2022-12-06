@@ -1,14 +1,14 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Speak.TelegramBot.FeatureHandlers;
-using Speak.TelegramBot.FeatureRequests;
+using Speak.Telegram.Bot.FeatureHandlers;
+using Speak.Telegram.Bot.FeatureRequests;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Speak.TelegramBot;
+namespace Speak.Telegram.Bot;
 
 internal class TelegramMessageRouter : ITelegramMessageRouter
 {

@@ -1,4 +1,4 @@
-namespace Speak.TelegramBot;
+namespace Speak.Telegram.Bot;
 
 internal class BotConfiguration
 {

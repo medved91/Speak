@@ -1,4 +1,4 @@
-namespace Speak.TelegramBot.FeatureHandlers;
+namespace Speak.Telegram.Bot.FeatureHandlers;
 
 /// <summary>
 /// Контракт хендлера фичи

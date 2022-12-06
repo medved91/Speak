@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
-namespace Speak.TelegramBot;
+namespace Speak.Telegram.Bot;
 
 internal class ConfigureWebhookBackgroundService : IHostedService
 {

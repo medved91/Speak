@@ -4,17 +4,17 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Speak.Storage;
-using Speak.TelegramBot.Entities;
-using Speak.TelegramBot.FeatureHandlers;
-using Speak.TelegramBot.FeatureRequests;
-using Speak.TelegramBot.Storage;
+using Speak.Telegram.Bot.Entities;
+using Speak.Telegram.Bot.FeatureHandlers;
+using Speak.Telegram.Bot.FeatureRequests;
+using Speak.Telegram.Bot.Storage;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-[assembly: InternalsVisibleTo("Speak.TelegramBot.Tests")]
+[assembly: InternalsVisibleTo("Speak.Telegram.Bot.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
-namespace Speak.TelegramBot;
+namespace Speak.Telegram.Bot;
 
 public static class DependenciesRegistration
 {

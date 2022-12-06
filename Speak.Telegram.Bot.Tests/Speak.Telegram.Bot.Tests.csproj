@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Speak.TelegramBot\Speak.TelegramBot.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.Bot\Speak.Telegram.Bot.csproj" />
     </ItemGroup>
 
 </Project>

@@ -6,12 +6,12 @@ using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 using Speak.Storage;
-using Speak.TelegramBot.Entities;
-using Speak.TelegramBot.FeatureHandlers;
-using Speak.TelegramBot.FeatureRequests;
+using Speak.Telegram.Bot.Entities;
+using Speak.Telegram.Bot.FeatureHandlers;
+using Speak.Telegram.Bot.FeatureRequests;
 using Telegram.Bot;
 
-namespace Speak.TelegramBot.Tests;
+namespace Speak.Telegram.Bot.Tests;
 
 [NonParallelizable]
 public class PickWhichPepeAmITodayFeatureHandlerTests

@@ -1,12 +1,12 @@
 using Speak.Storage;
-using Speak.TelegramBot.Entities;
-using Speak.TelegramBot.FeatureRequests;
+using Speak.Telegram.Bot.Entities;
+using Speak.Telegram.Bot.FeatureRequests;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 
-namespace Speak.TelegramBot.FeatureHandlers;
+namespace Speak.Telegram.Bot.FeatureHandlers;
 
 internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message>
 {
