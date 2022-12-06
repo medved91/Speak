@@ -81,9 +81,12 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
         await using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var fileName = filePath.Split(Path.DirectorySeparatorChar).Last();
 
-        return await _botClient.SendPhotoAsync(chatId,
-            new InputOnlineFile(fileStream, fileName),
-            replyMessage,
-            replyToMessageId: replyToMessageId);
+        var file = new InputOnlineFile(fileStream, fileName);
+        
+        if(fileName.EndsWith(".gif"))
+            return await _botClient.SendAnimationAsync(chatId, file, caption:replyMessage, 
+                replyToMessageId:replyToMessageId);
+
+        return await _botClient.SendPhotoAsync(chatId, file, replyMessage, replyToMessageId:replyToMessageId);
     }
 }
