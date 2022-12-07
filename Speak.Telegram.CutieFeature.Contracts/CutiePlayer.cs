@@ -1,11 +1,11 @@
-namespace Speak.Telegram.CutieFeature;
+namespace Speak.Telegram.CutieFeature.Contracts;
 
 #nullable disable
 
 /// <summary>
 /// Зарегистрировавшийся игрок в Лапусечку
 /// </summary>
-public class Player
+public class CutiePlayer
 {
     /// <summary>
     /// Имя пользователя в Телеграм

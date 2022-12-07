@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Speak.Storage;
-using Speak.Telegram.Bot.Entities;
-using Speak.Telegram.Bot.FeatureHandlers;
-using Speak.Telegram.Bot.FeatureRequests;
-using Speak.Telegram.Bot.Storage;
+using Speak.Telegram.PepeFeature;
+using Speak.Telegram.Postgres;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -34,9 +31,10 @@ public static class DependenciesRegistration
 
         services.AddHostedService<ConfigureWebhookBackgroundService>();
         services.AddScoped<ITelegramMessageRouter, TelegramMessageRouter>();
-        services.AddSingleton<IRepository<TodayPepe>, TodayPepesRepository>();
 
-        services.AddTeleramFeatures();
+        services.AddPepeFeature();
+
+        services.AddPostgresDatabase(configuration);
 
         return services;
     }
@@ -51,11 +49,5 @@ public static class DependenciesRegistration
             new { controller = "TelegramWebhook", action = "Post" });
 
         return routes;
-    }
-
-    private static void AddTeleramFeatures(this IServiceCollection services)
-    {
-        services
-            .AddScoped<ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message>, PickWhichPepeAmITodayHandler>();
     }
 }

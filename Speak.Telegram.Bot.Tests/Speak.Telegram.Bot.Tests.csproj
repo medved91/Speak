@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Speak.Telegram.Bot\Speak.Telegram.Bot.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.PepeFeature\Speak.Telegram.PepeFeature.csproj" />
     </ItemGroup>
 
 </Project>

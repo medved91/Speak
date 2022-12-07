@@ -32,6 +32,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Speak.Telegram.Bot\Speak.Telegram.Bot.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.Postgres\Speak.Telegram.Postgres.csproj" />
       <ProjectReference Include="..\Speak.WebRtc\Speak.WebRtc.csproj" />
     </ItemGroup>
 

@@ -1,7 +1,8 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Speak.Telegram.Bot.FeatureHandlers;
-using Speak.Telegram.Bot.FeatureRequests;
+using Speak.Telegram.CommonContracts;
+using Speak.Telegram.CutieFeature.Contracts.Requests;
+using Speak.Telegram.PepeFeature;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -16,23 +17,25 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private readonly ILogger<TelegramMessageRouter> _logger;
 
     private readonly ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> _pepePickerFeatureHandler;
+    private readonly ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> _regInCutieFeatureHandler;
 
     public TelegramMessageRouter(ITelegramBotClient botClient, 
         ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> pepePickerFeatureHandler, 
+        ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieFeatureHandler, 
         ILogger<TelegramMessageRouter> logger)
     {
         _botClient = botClient;
         _logger = logger;
+        _regInCutieFeatureHandler = regInCutieFeatureHandler;
         _pepePickerFeatureHandler = pepePickerFeatureHandler;
     }
 
-    public async Task HandleNewMessageAsync(Update update)
+    public async Task HandleNewMessageAsync(Update update, CancellationToken ct)
     {
         var handler = update.Type switch
         {
-            UpdateType.Message => BotOnMessageReceivedAsync(update.Message!),
-            UpdateType.EditedMessage => BotOnMessageReceivedAsync(update.EditedMessage!),
-            _ => BotOnUnknownMessageReceivedAsync(update)
+            UpdateType.Message => BotOnMessageReceivedAsync(update.Message!, ct),
+            _ => BotOnUnknownMessageReceivedAsync(update, ct)
         };
 
         try
@@ -41,19 +44,25 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
         }
         catch (Exception exception)
         {
-            await HandleErrorAsync(exception);
+            await HandleErrorAsync(exception, update.Message?.Chat.Id, ct);
         }
     }
 
-    private async Task BotOnMessageReceivedAsync(Message message)
+    private async Task BotOnMessageReceivedAsync(Message message, CancellationToken ct)
     {
         _logger.LogInformation("Получено сообщение с типом: {MessageType}", message.Type);
         if (message.Type != MessageType.Text) return;
         
         var action = message.Text!.Split(' ')[0] switch
         {
-            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") => _pepePickerFeatureHandler
-                .Handle(new PickWhichPepeAmITodayRequest(message.From?.Username, message.Chat.Id, message.MessageId)),
+            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") 
+                => _pepePickerFeatureHandler.Handle(new PickWhichPepeAmITodayRequest(
+                    message.From?.Username, message.Chat.Id, message.MessageId), ct),
+            
+            var registerInCutie when Regex.IsMatch(registerInCutie, @"^\/regCutie[@]?")
+                => _regInCutieFeatureHandler.Handle(new RegisterInCutieFeatureRequest(
+                    message.From?.Username, message.Chat.Id, message.MessageId), ct),
+            
             _ => Usage(message)
         };
         
@@ -64,27 +73,31 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private async Task<Message> Usage(Message message)
     {
         const string usage = "Команды:\n" +
-                             "/pepe - получить рандомного Пепе\n";
+                             "/pepe - узнать, какой ты Pepe сегодня\n";
 
         return await _botClient.SendTextMessageAsync(message.Chat.Id, text: usage, replyMarkup: new ReplyKeyboardRemove());
     }
 
-    private Task BotOnUnknownMessageReceivedAsync(Update update)
+    private Task BotOnUnknownMessageReceivedAsync(Update update, CancellationToken ct)
     {
         _logger.LogInformation("Неизвестный тип сообщения: {UpdateType}", update.Type);
         return Task.CompletedTask;
     }
 
-    private Task HandleErrorAsync(Exception exception)
+    private async Task HandleErrorAsync(Exception exception, long? chatId, CancellationToken ct)
     {
         var errorMessage = exception switch
         {
             ApiRequestException apiRequestException => 
                 $"Ошибка Telegram API:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-            _ => exception.ToString()
+            _ => exception.Message
         };
 
-        _logger.LogInformation("Ошибка обработки сообщения: {ErrorMessage}", errorMessage);
-        return Task.CompletedTask;
+        _logger.LogError(exception, "Ошибка обработки сообщения Telegram: {ErrorMessage}", errorMessage);
+
+        if (chatId.HasValue)
+            await _botClient.SendTextMessageAsync(chatId, 
+                "Что-то пошло не так :( Напиши, пожалуйста, @medveden91, либо попробуй позже...", 
+                cancellationToken: ct);
     }
 }

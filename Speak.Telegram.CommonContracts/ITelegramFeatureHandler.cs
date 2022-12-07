@@ -1,4 +1,4 @@
-namespace Speak.Telegram.Bot.FeatureHandlers;
+namespace Speak.Telegram.CommonContracts;
 
 /// <summary>
 /// Контракт хендлера фичи
@@ -9,7 +9,7 @@ public interface ITelegramFeatureHandler<in TFeatureRequest>
     /// <summary>
     /// Выполнить фичу
     /// </summary>
-    Task Handle(TFeatureRequest request);
+    Task Handle(TFeatureRequest request, CancellationToken ct);
 }
 
 /// <summary>
@@ -22,5 +22,5 @@ public interface ITelegramFeatureHandler<in TFeatureRequest, TResult>
     /// <summary>
     /// Выполнить фичу
     /// </summary>
-    Task<TResult> Handle(TFeatureRequest request);
+    Task<TResult> Handle(TFeatureRequest request, CancellationToken ct);
 }

@@ -1,14 +1,14 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
-using Speak.Storage;
-using Speak.Telegram.Bot.Entities;
-using Speak.Telegram.Bot.FeatureHandlers;
-using Speak.Telegram.Bot.FeatureRequests;
+using Speak.Telegram.CommonContracts;
+using Speak.Telegram.PepeFeature;
+using Speak.Telegram.PepeFeature.Entities;
 using Telegram.Bot;
 
 namespace Speak.Telegram.Bot.Tests;
@@ -35,20 +35,20 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         var request = new PickWhichPepeAmITodayRequest("testUserName", 1, 1);
 
         var firstPepeImagePath = Directory.GetFiles("Files").First();
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._, A<CancellationToken>._))
             .Returns((TodayPepe?)null).Once()
             .Then
             .Returns(new TodayPepe("testUsername", firstPepeImagePath));
 
         // Act
-        _featureUnderTests.Handle(request).GetAwaiter().GetResult();
-        _featureUnderTests.Handle(request).GetAwaiter().GetResult();
+        _featureUnderTests.Handle(request, CancellationToken.None).GetAwaiter().GetResult();
+        _featureUnderTests.Handle(request, CancellationToken.None).GetAwaiter().GetResult();
 
         // Assert
-        A.CallTo(() => _fakeRepo.AddAsync(A<TodayPepe>.That.Matches(p => p.Username == request.Username)))
+        A.CallTo(() => _fakeRepo.AddAsync(A<TodayPepe>.That.Matches(p => p.Username == request.Username), A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
         
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe,bool>>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe,bool>>._, A<CancellationToken>._))
             .MustHaveHappenedTwiceExactly();
     }
 
@@ -62,15 +62,16 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         
         var pepes = new[] { oldPepe, newPepe, secondOldPepe};
 
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._, A<CancellationToken>._))
             .ReturnsLazily(cf =>
             {
                 var predicate = cf.Arguments[0] as Func<TodayPepe, bool>;
-                return Task.FromResult(pepes.FirstOrDefault(predicate));
+                return Task.FromResult(pepes.FirstOrDefault(predicate!));
             });
 
         // Act
-        var todaysPepe = _featureUnderTests.GetCurrentUserAlreadyChosenPepe("username").GetAwaiter().GetResult();
+        var todaysPepe = _featureUnderTests
+            .GetCurrentUserAlreadyChosenPepe("username", CancellationToken.None).GetAwaiter().GetResult();
         
         // Assert
         todaysPepe.Should().Be(newPepe);

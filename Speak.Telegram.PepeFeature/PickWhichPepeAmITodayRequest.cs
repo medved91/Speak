@@ -1,6 +1,6 @@
-namespace Speak.Telegram.Bot.FeatureRequests;
+namespace Speak.Telegram.PepeFeature;
 
-internal class PickWhichPepeAmITodayRequest
+public class PickWhichPepeAmITodayRequest
 {
     public PickWhichPepeAmITodayRequest(string? username, long chatId, int initialMessageId)
     {

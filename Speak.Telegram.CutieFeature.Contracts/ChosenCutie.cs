@@ -1,21 +1,21 @@
-namespace Speak.Telegram.CutieFeature;
+namespace Speak.Telegram.CutieFeature.Contracts;
 
 #nullable disable
 
 /// <summary>
 /// Выбранная Лапусечка
 /// </summary>
-public class Cutie
+public class ChosenCutie
 {
     /// <summary>
     /// Пользователь, выбранный лапусечкой
     /// </summary>
-    public Player Player { get; set; }
+    public CutiePlayer Player { get; set; }
 
     /// <summary>
     /// Задание для Лапусечки
     /// </summary>
-    public Mission Mission { get; set; }
+    public CutieMission Mission { get; set; }
     
     /// <summary>
     /// Когда был выбран

@@ -7,9 +7,12 @@ namespace Speak.Web.Controllers;
 public class TelegramWebhookController : ControllerBase
 {
     private readonly ILogger<TelegramWebhookController> _logger;
+    private readonly IHostApplicationLifetime _applicationLifetime;
 
-    public TelegramWebhookController(ILogger<TelegramWebhookController> logger)
+    public TelegramWebhookController(IHostApplicationLifetime applicationLifetime, 
+        ILogger<TelegramWebhookController> logger)
     {
+        _applicationLifetime = applicationLifetime;
         _logger = logger;
     }
 
@@ -19,7 +22,7 @@ public class TelegramWebhookController : ControllerBase
     {
         _logger.LogInformation("Получено сообщение из Telegram: {@MessageBody}", update);
         
-        await messageRouter.HandleNewMessageAsync(update);
+        await messageRouter.HandleNewMessageAsync(update, _applicationLifetime.ApplicationStopping);
         return Ok();
     }
 }

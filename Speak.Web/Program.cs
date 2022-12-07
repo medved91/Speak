@@ -1,6 +1,8 @@
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Speak.Telegram.Bot;
+using Speak.Telegram.Postgres;
 using Speak.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +40,9 @@ builder.Services
     .AddSignalR();
 
 var app = builder.Build();
+
+var dbContext = app.Services.GetRequiredService<TelegramBotDbContext>();
+dbContext.Database.Migrate();
 
 // Пайплайн HTTP реквестов
 if (app.Environment.IsDevelopment()) app.UseSwagger().UseSwaggerUI();

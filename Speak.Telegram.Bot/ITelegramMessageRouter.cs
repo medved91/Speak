@@ -7,5 +7,5 @@ namespace Speak.Telegram.Bot;
 /// </summary>
 public interface ITelegramMessageRouter
 {
-    Task HandleNewMessageAsync(Update update);
+    Task HandleNewMessageAsync(Update update, CancellationToken ct);
 }

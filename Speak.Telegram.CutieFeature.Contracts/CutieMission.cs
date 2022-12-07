@@ -1,11 +1,11 @@
-﻿namespace Speak.Telegram.CutieFeature;
+﻿namespace Speak.Telegram.CutieFeature.Contracts;
 
 #nullable disable
 
 /// <summary>
 /// Задание для лапусечки
 /// </summary>
-public class Mission
+public class CutieMission
 {
     /// <summary>
     /// Текст задания
