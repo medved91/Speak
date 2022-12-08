@@ -7,7 +7,7 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace Speak.Telegram.PepeFeature;
 
-internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message>
+internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message>
 {
     private readonly IRepository<TodayPepe> _todayPepesRepo;
     private readonly ITelegramBotClient _botClient;
@@ -26,7 +26,7 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
         _todayPepesRepo = todayPepesRepo;
     }
 
-    public async Task<Message> Handle(PickWhichPepeAmITodayRequest request, CancellationToken ct)
+    public async Task<Message> Handle(PickWhichPepeAmITodayFeatureRequest request, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(request.Username))
             return await _botClient.SendTextMessageAsync(request.ChatId, 
@@ -62,7 +62,7 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
         return currentUserPepe;
     }
 
-    private async Task<Message> PickPepeAndSendMessage(PickWhichPepeAmITodayRequest request, CancellationToken ct)
+    private async Task<Message> PickPepeAndSendMessage(PickWhichPepeAmITodayFeatureRequest request, CancellationToken ct)
     {
         var random = new Random();
         var files = Directory.GetFiles("Files");

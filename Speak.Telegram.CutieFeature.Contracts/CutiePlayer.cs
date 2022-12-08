@@ -1,6 +1,5 @@
 namespace Speak.Telegram.CutieFeature.Contracts;
 
-#nullable disable
 
 /// <summary>
 /// Зарегистрировавшийся игрок в Лапусечку
@@ -10,7 +9,17 @@ public class CutiePlayer
     /// <summary>
     /// Имя пользователя в Телеграм
     /// </summary>
-    public string TelegramUsername { get; set; }
+    public string TelegramUsername { get; set; } = null!;
+
+    /// <summary>
+    /// Имя пользователя
+    /// </summary>
+    public string? FirstName { get; set; }
+    
+    /// <summary>
+    /// Фамилия пользователя
+    /// </summary>
+    public string? LastName { get; set; }
     
     /// <summary>
     /// На каком канале пользователь зарегался в игре

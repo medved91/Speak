@@ -1,8 +1,8 @@
 namespace Speak.Telegram.PepeFeature;
 
-public class PickWhichPepeAmITodayRequest
+public class PickWhichPepeAmITodayFeatureRequest
 {
-    public PickWhichPepeAmITodayRequest(string? username, long chatId, int initialMessageId)
+    public PickWhichPepeAmITodayFeatureRequest(string? username, long chatId, int initialMessageId)
     {
         Username = username;
         ChatId = chatId;

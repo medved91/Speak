@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
@@ -32,10 +33,10 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
     public void ShouldAddPepeOnce_WhenHasAlreadyPickedPepe()
     {
         // Arrange
-        var request = new PickWhichPepeAmITodayRequest("testUserName", 1, 1);
+        var request = new PickWhichPepeAmITodayFeatureRequest("testUserName", 1, 1);
 
         var firstPepeImagePath = Directory.GetFiles("Files").First();
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._, A<CancellationToken>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Expression<Func<TodayPepe, bool>>>._, A<CancellationToken>._))
             .Returns((TodayPepe?)null).Once()
             .Then
             .Returns(new TodayPepe("testUsername", firstPepeImagePath));
@@ -48,7 +49,7 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         A.CallTo(() => _fakeRepo.AddAsync(A<TodayPepe>.That.Matches(p => p.Username == request.Username), A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
         
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe,bool>>._, A<CancellationToken>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Expression<Func<TodayPepe,bool>>>._, A<CancellationToken>._))
             .MustHaveHappenedTwiceExactly();
     }
 
@@ -62,11 +63,11 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         
         var pepes = new[] { oldPepe, newPepe, secondOldPepe};
 
-        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Func<TodayPepe, bool>>._, A<CancellationToken>._))
+        A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Expression<Func<TodayPepe, bool>>>._, A<CancellationToken>._))
             .ReturnsLazily(cf =>
             {
-                var predicate = cf.Arguments[0] as Func<TodayPepe, bool>;
-                return Task.FromResult(pepes.FirstOrDefault(predicate!));
+                var predicate = cf.Arguments[0] as Expression<Func<TodayPepe, bool>>;
+                return Task.FromResult(pepes.FirstOrDefault(predicate!.Compile()));
             });
 
         // Act

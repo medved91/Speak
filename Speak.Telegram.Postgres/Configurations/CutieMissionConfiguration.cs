@@ -9,9 +9,8 @@ public class CutieMissionConfiguration : IEntityTypeConfiguration<CutieMission>
     public void Configure(EntityTypeBuilder<CutieMission> builder)
     {
         builder.ToTable("CutieMissions");
-
-        builder.Property<int>("Id").ValueGeneratedOnAdd();
-        builder.HasKey("Id");
+        
+        builder.HasKey(m => m.Id);
 
         builder.Property(m => m.Description).IsRequired();
     }

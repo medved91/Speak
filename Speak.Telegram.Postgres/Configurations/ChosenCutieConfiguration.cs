@@ -10,18 +10,21 @@ public class ChosenCutieConfiguration : IEntityTypeConfiguration<ChosenCutie>
     {
         builder.ToTable("ChosenCuties");
 
-        builder.HasKey(c => new { c.Player.ChatId, c.Player.TelegramUsername });
+        builder.Property<long>("ChatId");
+        builder.Property<string>("PlayerUsername");
+
+        builder.HasKey("ChatId", "PlayerUsername");
         
         builder.HasOne(c => c.Player)
             .WithMany()
-            .IsRequired();
+            .IsRequired()
+            .HasForeignKey("ChatId", "PlayerUsername");
 
         builder.HasOne(c => c.Mission)
             .WithMany()
             .IsRequired();
 
         builder.Property(b => b.WhenChosen)
-            .IsRequired()
-            .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+            .IsRequired();
     }
 }

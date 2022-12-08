@@ -11,5 +11,7 @@ public class CutieThinkingPhraseConfiguration : IEntityTypeConfiguration<CutieTh
         builder.ToTable("CutieThinkingPhrases");
 
         builder.HasNoKey();
+
+        builder.Property(p => p.Phrase).IsRequired();
     }
 }

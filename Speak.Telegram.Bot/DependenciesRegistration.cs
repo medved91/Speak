@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Speak.Telegram.CutieFeature;
 using Speak.Telegram.PepeFeature;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
@@ -32,7 +33,9 @@ public static class DependenciesRegistration
         services.AddHostedService<ConfigureWebhookBackgroundService>();
         services.AddScoped<ITelegramMessageRouter, TelegramMessageRouter>();
 
-        services.AddPepeFeature();
+        services
+            .AddPepeFeature()
+            .AddCutieFeature();
 
         services.AddPostgresDatabase(configuration);
 

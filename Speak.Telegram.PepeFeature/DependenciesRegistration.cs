@@ -14,7 +14,7 @@ public static class DependenciesRegistration
     public static IServiceCollection AddPepeFeature(this IServiceCollection services)
     {
         services.AddSingleton<IRepository<TodayPepe>, TodayPepesRepository>();
-        services.AddScoped<ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message>, PickWhichPepeAmITodayHandler>();
+        services.AddScoped<ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message>, PickWhichPepeAmITodayHandler>();
         
         return services;
     }

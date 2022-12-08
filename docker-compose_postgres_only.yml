@@ -15,4 +15,3 @@ services:
 volumes:
   pgdata:
     external: true
-    name: pgdata

@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
+
 namespace Speak.Telegram.CommonContracts;
 
 public interface IRepository<TEntity>
 {
-    public Task AddAsync(TEntity pepe, CancellationToken ct);
+    public Task<TEntity> AddAsync(TEntity player, CancellationToken ct);
 
-    public Task<TEntity?> FirstOrDefaultAsync(Func<TEntity, bool> predicate, CancellationToken ct);
+    public Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct);
 }

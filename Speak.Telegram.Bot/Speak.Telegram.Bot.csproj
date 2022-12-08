@@ -58,6 +58,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Speak.Telegram.CutieFeature.Contracts\Speak.Telegram.CutieFeature.Contracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.CutieFeature\Speak.Telegram.CutieFeature.csproj" />
       <ProjectReference Include="..\Speak.Telegram.PepeFeature\Speak.Telegram.PepeFeature.csproj" />
       <ProjectReference Include="..\Speak.Telegram.Postgres\Speak.Telegram.Postgres.csproj" />
     </ItemGroup>

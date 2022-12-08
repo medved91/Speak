@@ -41,9 +41,6 @@ builder.Services
 
 var app = builder.Build();
 
-var dbContext = app.Services.GetRequiredService<TelegramBotDbContext>();
-dbContext.Database.Migrate();
-
 // Пайплайн HTTP реквестов
 if (app.Environment.IsDevelopment()) app.UseSwagger().UseSwaggerUI();
 

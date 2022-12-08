@@ -8,6 +8,11 @@
 public class CutieMission
 {
     /// <summary>
+    /// Идентификатор задания
+    /// </summary>
+    public int Id { get; set; }
+    
+    /// <summary>
     /// Текст задания
     /// </summary>
     public string Description { get; set; }

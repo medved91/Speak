@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Speak.Telegram.CommonContracts\Speak.Telegram.CommonContracts.csproj" />
       <ProjectReference Include="..\Speak.Telegram.CutieFeature.Contracts\Speak.Telegram.CutieFeature.Contracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.Postgres\Speak.Telegram.Postgres.csproj" />
     </ItemGroup>
 
     <ItemGroup>

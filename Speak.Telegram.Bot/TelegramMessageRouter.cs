@@ -16,16 +16,19 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private readonly ITelegramBotClient _botClient;
     private readonly ILogger<TelegramMessageRouter> _logger;
 
-    private readonly ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> _pepePickerFeatureHandler;
+    private readonly ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> _pepePickerFeatureHandler;
     private readonly ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> _regInCutieFeatureHandler;
+    private readonly ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> _startCutieElectionsFeatureHandler;
 
-    public TelegramMessageRouter(ITelegramBotClient botClient, 
-        ITelegramFeatureHandler<PickWhichPepeAmITodayRequest, Message> pepePickerFeatureHandler, 
-        ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieFeatureHandler, 
+    public TelegramMessageRouter(ITelegramBotClient botClient,
+        ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> pepePickerFeatureHandler,
+        ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> startCutieElectionsFeatureHandler,
+        ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieFeatureHandler,
         ILogger<TelegramMessageRouter> logger)
     {
         _botClient = botClient;
         _logger = logger;
+        _startCutieElectionsFeatureHandler = startCutieElectionsFeatureHandler;
         _regInCutieFeatureHandler = regInCutieFeatureHandler;
         _pepePickerFeatureHandler = pepePickerFeatureHandler;
     }
@@ -56,12 +59,15 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
         var action = message.Text!.Split(' ')[0] switch
         {
             var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") 
-                => _pepePickerFeatureHandler.Handle(new PickWhichPepeAmITodayRequest(
+                => _pepePickerFeatureHandler.Handle(new PickWhichPepeAmITodayFeatureRequest(
                     message.From?.Username, message.Chat.Id, message.MessageId), ct),
             
-            var registerInCutie when Regex.IsMatch(registerInCutie, @"^\/regCutie[@]?")
-                => _regInCutieFeatureHandler.Handle(new RegisterInCutieFeatureRequest(
-                    message.From?.Username, message.Chat.Id, message.MessageId), ct),
+            var registerInCutie when Regex.IsMatch(registerInCutie, @"^\/join_cutie[@]?")
+                => _regInCutieFeatureHandler.Handle(new RegisterInCutieFeatureRequest(message.From?.Username, 
+                    message.From?.FirstName, message.From?.LastName, message.Chat.Id, message.MessageId), ct),
+            
+            var cutieElections when Regex.IsMatch(cutieElections, @"^\/get_cutie[@]?")
+                => _startCutieElectionsFeatureHandler.Handle(new StartCutieElectionsFeatureRequest(message.Chat.Id), ct),
             
             _ => Usage(message)
         };
