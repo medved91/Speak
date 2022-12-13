@@ -69,19 +69,16 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
             var cutieElections when Regex.IsMatch(cutieElections, @"^\/get_cutie[@]?")
                 => _startCutieElectionsFeatureHandler.Handle(new StartCutieElectionsFeatureRequest(message.Chat.Id), ct),
             
-            _ => Usage(message)
+            _ => DefaultHandler(message)
         };
         
         var sentMessage = await action;
         _logger.LogInformation("Отправлено сообщение с id: {SentMessageId}", sentMessage.MessageId);
     }
 
-    private async Task<Message> Usage(Message message)
+    private static Task<Message> DefaultHandler(Message message)
     {
-        const string usage = "Команды:\n" +
-                             "/pepe - узнать, какой ты Pepe сегодня\n";
-
-        return await _botClient.SendTextMessageAsync(message.Chat.Id, text: usage, replyMarkup: new ReplyKeyboardRemove());
+        return Task.FromResult(new Message());
     }
 
     private Task BotOnUnknownMessageReceivedAsync(Update update, CancellationToken ct)

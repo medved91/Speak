@@ -60,8 +60,8 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         var oldPepe = new TodayPepe("username", "path", DateTimeOffset.Now.Date.AddTicks(-2));
         var newPepe = new TodayPepe("username", "path");
         var secondOldPepe = new TodayPepe("username", "path", DateTimeOffset.Now.Date.AddTicks(-5));
-        
-        var pepes = new[] { oldPepe, newPepe, secondOldPepe};
+
+        var pepes = new[] { oldPepe, newPepe, secondOldPepe };
 
         A.CallTo(() => _fakeRepo.FirstOrDefaultAsync(A<Expression<Func<TodayPepe, bool>>>._, A<CancellationToken>._))
             .ReturnsLazily(cf =>
@@ -73,7 +73,7 @@ public class PickWhichPepeAmITodayFeatureHandlerTests
         // Act
         var todaysPepe = _featureUnderTests
             .GetCurrentUserAlreadyChosenPepe("username", CancellationToken.None).GetAwaiter().GetResult();
-        
+
         // Assert
         todaysPepe.Should().Be(newPepe);
     }
