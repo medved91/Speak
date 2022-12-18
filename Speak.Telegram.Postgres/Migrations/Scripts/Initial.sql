@@ -36,7 +36,7 @@ CREATE TABLE speak."ChosenCuties" (
                                       "PlayerUsername" text NOT NULL,
                                       "MissionId" integer NOT NULL,
                                       "WhenChosen" timestamp with time zone NOT NULL,
-                                      CONSTRAINT "PK_ChosenCuties" PRIMARY KEY ("ChatId", "PlayerUsername"),
+                                      CONSTRAINT "PK_ChosenCuties" PRIMARY KEY ("ChatId", "PlayerUsername", "WhenChosen"),
                                       CONSTRAINT "FK_ChosenCuties_CutieMissions_MissionId" FOREIGN KEY ("MissionId") REFERENCES speak."CutieMissions" ("Id") ON DELETE CASCADE,
                                       CONSTRAINT "FK_ChosenCuties_CutiePlayers_ChatId_PlayerUsername" FOREIGN KEY ("ChatId", "PlayerUsername") REFERENCES speak."CutiePlayers" ("ChatId", "TelegramUsername") ON DELETE CASCADE
 );

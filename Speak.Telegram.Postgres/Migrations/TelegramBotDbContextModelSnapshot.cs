@@ -31,13 +31,13 @@ namespace Speak.Telegram.Postgres.Migrations
                     b.Property<string>("PlayerUsername")
                         .HasColumnType("text");
 
-                    b.Property<int>("MissionId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset>("WhenChosen")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ChatId", "PlayerUsername");
+                    b.Property<int>("MissionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChatId", "PlayerUsername", "WhenChosen");
 
                     b.HasIndex("MissionId");
 

@@ -10,10 +10,10 @@ public class ChosenCutieConfiguration : IEntityTypeConfiguration<ChosenCutie>
     {
         builder.ToTable("ChosenCuties");
 
-        builder.HasNoKey();
-        
         builder.Property<long>("ChatId");
         builder.Property<string>("PlayerUsername");
+        
+        builder.HasKey("ChatId", "PlayerUsername", "WhenChosen");
 
         builder.HasOne(c => c.Player)
             .WithMany()

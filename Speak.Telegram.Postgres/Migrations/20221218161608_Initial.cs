@@ -60,14 +60,14 @@ namespace Speak.Telegram.Postgres.Migrations
                 schema: "speak",
                 columns: table => new
                 {
+                    WhenChosen = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ChatId = table.Column<long>(type: "bigint", nullable: false),
                     PlayerUsername = table.Column<string>(type: "text", nullable: false),
-                    MissionId = table.Column<int>(type: "integer", nullable: false),
-                    WhenChosen = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    MissionId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChosenCuties", x => new { x.ChatId, x.PlayerUsername });
+                    table.PrimaryKey("PK_ChosenCuties", x => new { x.ChatId, x.PlayerUsername, x.WhenChosen });
                     table.ForeignKey(
                         name: "FK_ChosenCuties_CutieMissions_MissionId",
                         column: x => x.MissionId,

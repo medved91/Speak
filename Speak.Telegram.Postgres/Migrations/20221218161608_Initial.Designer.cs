@@ -12,7 +12,7 @@ using Speak.Telegram.Postgres;
 namespace Speak.Telegram.Postgres.Migrations
 {
     [DbContext(typeof(TelegramBotDbContext))]
-    [Migration("20221208123423_Initial")]
+    [Migration("20221218161608_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -34,13 +34,13 @@ namespace Speak.Telegram.Postgres.Migrations
                     b.Property<string>("PlayerUsername")
                         .HasColumnType("text");
 
-                    b.Property<int>("MissionId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset>("WhenChosen")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ChatId", "PlayerUsername");
+                    b.Property<int>("MissionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChatId", "PlayerUsername", "WhenChosen");
 
                     b.HasIndex("MissionId");
 
