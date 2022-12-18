@@ -44,10 +44,15 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
 
         await SendThinkingPhraseAndWait(request.ChatId, ct);
 
-        return await _botClient.SendTextMessageAsync(request.ChatId,
+        var resultMessage = await _botClient.SendTextMessageAsync(request.ChatId,
             $"Лапусечка у нас сегодня {cutie.Player.FirstName} {cutie.Player.LastName} " +
             $"(@{cutie.Player.TelegramUsername})\nЗадание для Лапусечки: {cutie.Mission.Description}",
             cancellationToken: ct);
+
+        cutie.ElectionMessageId = resultMessage.MessageId;
+        await _dbContext.SaveChangesAsync(ct);
+
+        return resultMessage;
     }
 
     private async Task<Message> SendCurrentCutieReminder(long chatId, ChosenCutie lastChosenCutieInChat, CancellationToken ct)
@@ -55,12 +60,19 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
         var endOfCurrentDay = new DateTimeOffset(DateTime.Now.Date.AddDays(1).AddTicks(-1));
 
         var timeToNextElections = endOfCurrentDay.Subtract(DateTimeOffset.Now);
-        
+
+        if (lastChosenCutieInChat.MissionResultMessageId.HasValue)
+            return await _botClient.SendTextMessageAsync(chatId,
+                $"Лапусечка @{lastChosenCutieInChat.Player.TelegramUsername} выполнил задание: " +
+                $"{lastChosenCutieInChat.Mission.Description}\n" +
+                $"До следующих выборов: {(int)timeToNextElections.TotalHours} ч.",
+                replyToMessageId: lastChosenCutieInChat.MissionResultMessageId,
+                cancellationToken: ct);
+            
         return await _botClient.SendTextMessageAsync(chatId,
-            $"Лапусечка сегодня {lastChosenCutieInChat.Player.FirstName} " +
-            $"{lastChosenCutieInChat.Player.LastName} (@{lastChosenCutieInChat.Player.TelegramUsername})\n" +
-            $"Задание для Лапусечки: {lastChosenCutieInChat.Mission.Description}\n" +
-            $"До следующих выборов: {(int)timeToNextElections.TotalHours}ч.",
+            $"Лапусечка сегодня @{lastChosenCutieInChat.Player.TelegramUsername}\n" +
+            $"Лапусечка еще не выполнил задание: {lastChosenCutieInChat.Mission.Description}\nДо следующих выборов: {(int)timeToNextElections.TotalHours} ч.",
+            replyToMessageId: lastChosenCutieInChat.ElectionMessageId,
             cancellationToken: ct);
     }
 
@@ -107,6 +119,6 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
 
         await _botClient.SendTextMessageAsync(chatId, thinkingPhrase.Phrase, cancellationToken: ct);
         
-        Thread.Sleep(TimeSpan.FromSeconds(3));
+        Thread.Sleep(TimeSpan.FromSeconds(4));
     }
 }

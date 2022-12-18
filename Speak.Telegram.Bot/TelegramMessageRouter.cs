@@ -1,36 +1,24 @@
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Speak.Telegram.CommonContracts;
-using Speak.Telegram.CutieFeature.Contracts.Requests;
-using Speak.Telegram.PepeFeature;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Speak.Telegram.Bot;
 
 internal class TelegramMessageRouter : ITelegramMessageRouter
 {
     private readonly ITelegramBotClient _botClient;
+    private readonly IMessageHandlerFactory _handlerFactory;
+    
     private readonly ILogger<TelegramMessageRouter> _logger;
 
-    private readonly ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> _pepePickerFeatureHandler;
-    private readonly ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> _regInCutieFeatureHandler;
-    private readonly ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> _startCutieElectionsFeatureHandler;
-
-    public TelegramMessageRouter(ITelegramBotClient botClient,
-        ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> pepePickerFeatureHandler,
-        ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> startCutieElectionsFeatureHandler,
-        ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieFeatureHandler,
+    public TelegramMessageRouter(ITelegramBotClient botClient, IMessageHandlerFactory handlerFactory, 
         ILogger<TelegramMessageRouter> logger)
     {
         _botClient = botClient;
+        _handlerFactory = handlerFactory;
         _logger = logger;
-        _startCutieElectionsFeatureHandler = startCutieElectionsFeatureHandler;
-        _regInCutieFeatureHandler = regInCutieFeatureHandler;
-        _pepePickerFeatureHandler = pepePickerFeatureHandler;
     }
 
     public async Task HandleNewMessageAsync(Update update, CancellationToken ct)
@@ -54,31 +42,13 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
     private async Task BotOnMessageReceivedAsync(Message message, CancellationToken ct)
     {
         _logger.LogInformation("Получено сообщение с типом: {MessageType}", message.Type);
-        if (message.Type != MessageType.Text) return;
-        
-        var action = message.Text!.Split(' ')[0] switch
-        {
-            var pepe when Regex.IsMatch(pepe, @"^\/pepe[@]?") 
-                => _pepePickerFeatureHandler.Handle(new PickWhichPepeAmITodayFeatureRequest(
-                    message.From?.Username, message.Chat.Id, message.MessageId), ct),
-            
-            var registerInCutie when Regex.IsMatch(registerInCutie, @"^\/join_cutie[@]?")
-                => _regInCutieFeatureHandler.Handle(new RegisterInCutieFeatureRequest(message.From?.Username, 
-                    message.From?.FirstName, message.From?.LastName, message.Chat.Id, message.MessageId), ct),
-            
-            var cutieElections when Regex.IsMatch(cutieElections, @"^\/get_cutie[@]?")
-                => _startCutieElectionsFeatureHandler.Handle(new StartCutieElectionsFeatureRequest(message.Chat.Id), ct),
-            
-            _ => DefaultHandler(message)
-        };
-        
-        var sentMessage = await action;
-        _logger.LogInformation("Отправлено сообщение с id: {SentMessageId}", sentMessage.MessageId);
-    }
 
-    private static Task<Message> DefaultHandler(Message message)
-    {
-        return Task.FromResult(new Message());
+        var handler = _handlerFactory.GetHandlerFor(message, ct);
+        
+        if (handler == null) return;
+        
+        var sentMessage = await handler;
+        _logger.LogInformation("Отправлено сообщение с id: {SentMessageId}", sentMessage.MessageId);
     }
 
     private Task BotOnUnknownMessageReceivedAsync(Update update, CancellationToken ct)

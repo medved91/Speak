@@ -9,7 +9,7 @@ public class ChosenCutieConfiguration : IEntityTypeConfiguration<ChosenCutie>
     public void Configure(EntityTypeBuilder<ChosenCutie> builder)
     {
         builder.ToTable("ChosenCuties");
-
+        
         builder.Property<long>("ChatId");
         builder.Property<string>("PlayerUsername");
         

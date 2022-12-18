@@ -44,6 +44,6 @@ CREATE TABLE speak."ChosenCuties" (
 CREATE INDEX "IX_ChosenCuties_MissionId" ON speak."ChosenCuties" ("MissionId");
 
 INSERT INTO speak."__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20221208123423_Initial', '7.0.0');
+VALUES ('20221218161608_Initial', '7.0.0');
 
 COMMIT;
