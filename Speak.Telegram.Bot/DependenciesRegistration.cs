@@ -31,6 +31,7 @@ public static class DependenciesRegistration
 
         services.AddHostedService<ConfigureWebhookBackgroundService>();
         services.AddScoped<ITelegramMessageRouter, TelegramMessageRouter>();
+        services.AddScoped<IMessageHandlerFactory, MessageHandlerFactory>();
 
         services
             .AddPepeFeature()

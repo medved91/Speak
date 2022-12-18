@@ -5,7 +5,6 @@ using Speak.Telegram.CutieFeature.Contracts.Requests;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace Speak.Telegram.CutieFeature;
 
@@ -47,8 +46,7 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
 
         var resultMessage = await _botClient.SendTextMessageAsync(request.ChatId,
             $"Лапусечка у нас сегодня {cutie.Player.FirstName} {cutie.Player.LastName} " +
-            $"(@{cutie.Player.TelegramUsername})\nЗадание для Лапусечки: *{cutie.Mission.Description}*",
-            parseMode: ParseMode.MarkdownV2,
+            $"(@{cutie.Player.TelegramUsername})\nЗадание для Лапусечки: {cutie.Mission.Description}",
             cancellationToken: ct);
 
         cutie.ElectionMessageId = resultMessage.MessageId;
@@ -65,16 +63,15 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
 
         if (lastChosenCutieInChat.MissionResultMessageId.HasValue)
             return await _botClient.SendTextMessageAsync(chatId,
-                $"Лапусечка @{lastChosenCutieInChat.Player.TelegramUsername} задание " +
-                $"*{lastChosenCutieInChat.Mission.Description}* выполнил!\n" +
+                $"Лапусечка @{lastChosenCutieInChat.Player.TelegramUsername} выполнил задание: " +
+                $"{lastChosenCutieInChat.Mission.Description}\n" +
                 $"До следующих выборов: {(int)timeToNextElections.TotalHours} ч.",
                 replyToMessageId: lastChosenCutieInChat.MissionResultMessageId,
-                parseMode: ParseMode.MarkdownV2,
                 cancellationToken: ct);
             
         return await _botClient.SendTextMessageAsync(chatId,
             $"Лапусечка сегодня @{lastChosenCutieInChat.Player.TelegramUsername}\n" +
-            $"Лапусечка еще не выполнил задание!\nДо следующих выборов: {(int)timeToNextElections.TotalHours} ч.",
+            $"Лапусечка еще не выполнил задание: {lastChosenCutieInChat.Mission.Description}\nДо следующих выборов: {(int)timeToNextElections.TotalHours} ч.",
             replyToMessageId: lastChosenCutieInChat.ElectionMessageId,
             cancellationToken: ct);
     }

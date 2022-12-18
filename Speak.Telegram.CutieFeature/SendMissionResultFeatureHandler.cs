@@ -35,15 +35,15 @@ internal class SendMissionResultFeatureHandler : ITelegramFeatureHandler<SendMis
         if (lastChosenCutie == null || lastChosenCutie.ElectionMessageId != request.RepliedToBotMessageId) 
             return new Message();
 
-        if(lastChosenCutie.Player.TelegramUsername != request.UsernameWhoSentPhoto) 
+        if(lastChosenCutie.Player.TelegramUsername != request.UsernameWhoSentPhoto)
             return await _botClient.SendTextMessageAsync(request.ChatId,
-                "Прости, но выполненное задание должен прислать Лапусечка, а не ты >:(",
+                "Прости, но выполненное задание должен прислать Лапусечка >:(",
                 replyToMessageId: request.UserReplyMessageId,
                 cancellationToken: ct);
         
         if(lastChosenCutie.MissionResultMessageId.HasValue)
             return await _botClient.SendTextMessageAsync(request.ChatId,
-                $"@{lastChosenCutie.Player.TelegramUsername} Ты уже выполнил задание, вот:",
+                "Ты уже выполнил задание",
                 replyToMessageId: lastChosenCutie.MissionResultMessageId,
                 cancellationToken: ct);
 

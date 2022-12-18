@@ -65,6 +65,9 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
         // Если фотка пришла не в ответ на сообщение - игнорируем
         if (message.ReplyToMessage == null) return null;
 
-        return _missionResultHandler.Handle(new SendMissionResultFeatureRequest(), ct);
+        return _missionResultHandler.Handle(new SendMissionResultFeatureRequest(message.Chat.Id, 
+            message.ReplyToMessage.MessageId,
+            message.From?.Username,
+            message.MessageId), ct);
     }
 }
