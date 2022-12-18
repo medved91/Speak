@@ -15,6 +15,7 @@ public static class DependenciesRegistration
     {
         services.AddScoped<ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message>, RegisterInCutieFeatureHandler>();
         services.AddScoped<ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message>, StartCutieElectionsFeatureHandler>();
+        services.AddScoped<ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message>, SendMissionResultFeatureHandler>();
         
         return services;
     }

@@ -7,7 +7,6 @@ using Speak.Telegram.CutieFeature;
 using Speak.Telegram.PepeFeature;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 [assembly: InternalsVisibleTo("Speak.Telegram.Bot.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

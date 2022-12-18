@@ -21,4 +21,14 @@ public class ChosenCutie
     /// Когда был выбран
     /// </summary>
     public DateTimeOffset WhenChosen { get; set; }
+
+    /// <summary>
+    /// Идентификатор сообщения о выборе Лапусечки с заданием
+    /// </summary>
+    public int? ElectionMessageId { get; set; }
+    
+    /// <summary>
+    /// Идентификатор сообщения с выполненным заданием лапусечки
+    /// </summary>
+    public int? MissionResultMessageId { get; set; }
 }
