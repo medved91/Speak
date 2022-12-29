@@ -50,6 +50,11 @@ public static class DependenciesRegistration
             HttpClientName,
             $"bot/{token}",
             new { controller = "TelegramWebhook", action = "Post" });
+        
+        routes.MapControllerRoute(
+            HttpClientName,
+            $"bot/message/{token}",
+            new { controller = "TelegramWebhook", action = "PostMessage" });
 
         return routes;
     }

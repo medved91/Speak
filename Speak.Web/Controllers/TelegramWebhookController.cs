@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Speak.Telegram.Bot;
+using Speak.Web.Controllers.Requests;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Speak.Web.Controllers;
@@ -23,6 +25,16 @@ public class TelegramWebhookController : ControllerBase
         _logger.LogInformation("Получено сообщение из Telegram: {@MessageBody}", update);
         
         await messageRouter.HandleNewMessageAsync(update, _applicationLifetime.ApplicationStopping);
+        return Ok();
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> PostMessage([FromServices] ITelegramBotClient botClient,
+        [FromBody] MessageRequest request)
+    {
+        await botClient.SendTextMessageAsync(request.ChannelId, 
+            "@" + request.UserNameToTag + " " + request.Message);
+        
         return Ok();
     }
 }
