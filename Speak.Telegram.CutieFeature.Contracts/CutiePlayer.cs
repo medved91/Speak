@@ -1,5 +1,6 @@
-namespace Speak.Telegram.CutieFeature.Contracts;
+using Speak.Telegram.CommonContracts;
 
+namespace Speak.Telegram.CutieFeature.Contracts;
 
 /// <summary>
 /// Зарегистрировавшийся игрок в Лапусечку
@@ -20,9 +21,9 @@ public class CutiePlayer
     /// Фамилия пользователя
     /// </summary>
     public string? LastName { get; set; }
-    
+
     /// <summary>
     /// На каком канале пользователь зарегался в игре
     /// </summary>
-    public long ChatId { get; set; }
+    public Chat Chat { get; set; } = null!;
 }

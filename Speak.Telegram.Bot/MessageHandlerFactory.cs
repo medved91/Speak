@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Speak.Telegram.ChatMigrationFeatureContracts;
 using Speak.Telegram.CommonContracts;
 using Speak.Telegram.CutieFeature.Contracts.Requests;
 using Speak.Telegram.PepeFeature;
@@ -13,16 +14,19 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
     private readonly ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> _regInCutieHandler;
     private readonly ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> _startCutieElectionsHandler;
     private readonly ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message> _missionResultHandler;
+    private readonly ITelegramFeatureHandler<MigrateChatFeatureRequest, Message> _chatMigrationHandler;
 
     public MessageHandlerFactory(
         ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> pepePickerHandler, 
         ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> startCutieElectionsHandler, 
         ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieHandler, 
-        ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message> missionResultHandler)
+        ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message> missionResultHandler, 
+        ITelegramFeatureHandler<MigrateChatFeatureRequest, Message> chatMigrationHandler)
     {
         _startCutieElectionsHandler = startCutieElectionsHandler;
         _regInCutieHandler = regInCutieHandler;
         _missionResultHandler = missionResultHandler;
+        _chatMigrationHandler = chatMigrationHandler;
         _pepePickerHandler = pepePickerHandler;
     }
     
@@ -32,6 +36,8 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
         {
             MessageType.Text => GetTextMessageHandler(message, ct),
             MessageType.Photo => GetPhotoMessageHandler(message, ct),
+            MessageType.MigratedFromGroup => GetChatMigrationHandler(message, ct),
+            MessageType.MigratedToSupergroup => GetChatMigrationHandler(message, ct),
             _ => null
         };
 
@@ -69,5 +75,11 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
             message.ReplyToMessage.MessageId,
             message.From?.Username,
             message.MessageId), ct);
+    }
+
+    private Task<Message> GetChatMigrationHandler(Message message, CancellationToken ct)
+    {
+        return _chatMigrationHandler.Handle(
+            new MigrateChatFeatureRequest(message.Chat.Id, message.MigrateToChatId), ct);
     }
 }

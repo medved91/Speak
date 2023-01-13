@@ -16,7 +16,7 @@ public class ChosenCutie
     /// Задание для Лапусечки
     /// </summary>
     public CutieMission Mission { get; set; }
-    
+
     /// <summary>
     /// Когда был выбран
     /// </summary>

@@ -10,6 +10,13 @@ public class CutiePlayerConfiguration : IEntityTypeConfiguration<CutiePlayer>
     {
         builder.ToTable("CutiePlayers");
 
-        builder.HasKey(p => new { p.ChatId, p.TelegramUsername });
+        builder.Property<int>("ChatsTableId");
+
+        builder.HasKey("ChatsTableId", "TelegramUsername");
+
+        builder
+            .HasOne(p => p.Chat)
+            .WithMany()
+            .HasForeignKey("ChatsTableId");
     }
 }

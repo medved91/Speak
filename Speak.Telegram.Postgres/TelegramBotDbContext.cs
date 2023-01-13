@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Speak.Telegram.CommonContracts;
 using Speak.Telegram.CutieFeature.Contracts;
 using Speak.Telegram.Postgres.Configurations;
 
@@ -20,6 +21,8 @@ public class TelegramBotDbContext : DbContext
     public DbSet<CutiePlayer> CutiePlayers { get; set; }
     
     public DbSet<CutieThinkingPhrase> CutieThinkingPhrases { get; set; }
+    
+    public DbSet<Chat> Chats { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,7 +30,8 @@ public class TelegramBotDbContext : DbContext
             .ApplyConfiguration(new CutiePlayerConfiguration())
             .ApplyConfiguration(new CutieMissionConfiguration())
             .ApplyConfiguration(new ChosenCutieConfiguration())
-            .ApplyConfiguration(new CutieThinkingPhraseConfiguration());
+            .ApplyConfiguration(new CutieThinkingPhraseConfiguration())
+            .ApplyConfiguration(new ChatConfiguration());
 
         modelBuilder.HasDefaultSchema(ServiceSchema);
     }

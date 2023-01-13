@@ -30,7 +30,7 @@ internal class SendMissionResultFeatureHandler : ITelegramFeatureHandler<SendMis
             .Include(c => c.Player)
             .Include(c => c.Mission)
             .OrderByDescending(c => c.WhenChosen)
-            .FirstOrDefaultAsync(c => c.Player.ChatId == request.ChatId, ct);
+            .FirstOrDefaultAsync(c => c.Player.Chat.TelegramChatId == request.ChatId, ct);
         
         if (lastChosenCutie == null || lastChosenCutie.ElectionMessageId != request.RepliedToBotMessageId) 
             return new Message();

@@ -1,8 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Speak.Telegram.Bot;
-using Speak.Telegram.Postgres;
 using Speak.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);

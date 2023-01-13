@@ -5,6 +5,7 @@ using Speak.Telegram.CutieFeature.Contracts.Requests;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Chat = Speak.Telegram.CommonContracts.Chat;
 
 namespace Speak.Telegram.CutieFeature;
 
@@ -27,18 +28,21 @@ internal class RegisterInCutieFeatureHandler : ITelegramFeatureHandler<RegisterI
                 cancellationToken: ct);
 
         var alreadyRegisteredPlayer = await _dbContext.CutiePlayers
-            .FirstOrDefaultAsync(p => p.ChatId == request.ChatId && p.TelegramUsername == request.Username, ct);
+            .FirstOrDefaultAsync(p => 
+                p.Chat.TelegramChatId == request.ChatId && p.TelegramUsername == request.Username, ct);
 
         if (alreadyRegisteredPlayer != null)
             return await _botClient.SendTextMessageAsync(request.ChatId, "Ты уже участвуешь в выборах Лапусечки",
                 replyToMessageId: request.InitialMessageId, cancellationToken: ct);
+
+        var chat = await GetOrAddChat(request, ct);
 
         var newPlayer = new CutiePlayer
         {
             TelegramUsername = request.Username,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            ChatId = request.ChatId
+            Chat = chat
         };
 
         await _dbContext.CutiePlayers.AddAsync(newPlayer, ct);
@@ -47,5 +51,16 @@ internal class RegisterInCutieFeatureHandler : ITelegramFeatureHandler<RegisterI
         return await _botClient.SendTextMessageAsync(request.ChatId, 
             "Подравляю, ты добавлен в участники ежедневных выборов Лапусечки!",
             replyToMessageId: request.InitialMessageId, cancellationToken: ct);
+    }
+
+    private async Task<Chat> GetOrAddChat(RegisterInCutieFeatureRequest request, CancellationToken ct)
+    {
+        var chat = await _dbContext.Chats.FirstOrDefaultAsync(c => c.TelegramChatId == request.ChatId, ct);
+        if (chat != null) return chat;
+        
+        chat = (await _dbContext.Chats.AddAsync(new Chat { TelegramChatId = request.ChatId }, ct)).Entity;
+        await _dbContext.SaveChangesAsync(ct);
+
+        return chat;
     }
 }
