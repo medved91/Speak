@@ -6,8 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Speak.Telegram.CommonContracts\Speak.Telegram.CommonContracts.csproj" />
-    </ItemGroup>
-
 </Project>

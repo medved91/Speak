@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Telegram.Postgres", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Telegram.CutieFeature.Contracts", "Speak.Telegram.CutieFeature.Contracts\Speak.Telegram.CutieFeature.Contracts.csproj", "{10F1DDDF-4F47-4E68-BC9C-DC9CFF8135D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Telegram.ChatMigrationFeature", "Speak.Telegram.ChatMigrationFeature\Speak.Telegram.ChatMigrationFeature.csproj", "{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speak.Telegram.ChatMigrationFeatureContracts", "Speak.Telegram.ChatMigrationFeatureContracts\Speak.Telegram.ChatMigrationFeatureContracts.csproj", "{69125E4D-81DC-452F-B2D0-8167CFB48663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,14 @@ Global
 		{10F1DDDF-4F47-4E68-BC9C-DC9CFF8135D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10F1DDDF-4F47-4E68-BC9C-DC9CFF8135D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10F1DDDF-4F47-4E68-BC9C-DC9CFF8135D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69125E4D-81DC-452F-B2D0-8167CFB48663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69125E4D-81DC-452F-B2D0-8167CFB48663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69125E4D-81DC-452F-B2D0-8167CFB48663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69125E4D-81DC-452F-B2D0-8167CFB48663}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FF1076CF-12FA-4746-9909-C3B34A34228F} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
@@ -71,5 +83,7 @@ Global
 		{F77F3E80-BF82-449B-84C0-6C8B03BF55E5} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
 		{FFDB40FC-78BB-496F-895A-6C0A619C225C} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
 		{10F1DDDF-4F47-4E68-BC9C-DC9CFF8135D5} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
+		{AF0D0B8F-3DB4-4100-984D-FE7BC41B2284} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
+		{69125E4D-81DC-452F-B2D0-8167CFB48663} = {5AAB4C2A-5648-4353-B803-436B421CCF3D}
 	EndGlobalSection
 EndGlobal

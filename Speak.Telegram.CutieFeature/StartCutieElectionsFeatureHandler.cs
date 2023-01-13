@@ -25,14 +25,14 @@ internal class StartCutieElectionsFeatureHandler : ITelegramFeatureHandler<Start
             .Include(c => c.Player)
             .Include(c => c.Mission)
             .OrderByDescending(c => c.WhenChosen)
-            .FirstOrDefaultAsync(c => c.Player.ChatId == request.ChatId, ct);
+            .FirstOrDefaultAsync(c => c.Player.Chat.TelegramChatId == request.ChatId, ct);
 
         var endOfPreviousDay = new DateTimeOffset(DateTime.Now.Date.AddTicks(-1));
         if (lastChosenCutieInChat?.WhenChosen > endOfPreviousDay)
             return await SendCurrentCutieReminder(request.ChatId, lastChosenCutieInChat, ct);
 
         var chatPlayers = await _dbContext.CutiePlayers
-            .Where(p => p.ChatId == request.ChatId)
+            .Where(p => p.Chat.TelegramChatId == request.ChatId)
             .ToArrayAsync(ct);
 
         if (!chatPlayers.Any())
