@@ -2,7 +2,9 @@ using System.Text.RegularExpressions;
 using Speak.Telegram.ChatMigrationFeatureContracts;
 using Speak.Telegram.CommonContracts;
 using Speak.Telegram.CutieFeature.Contracts.Requests;
+using Speak.Telegram.MusicQuizFeatureContracts;
 using Speak.Telegram.PepeFeature;
+using Speak.Telegram.Postgres;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -15,19 +17,25 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
     private readonly ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> _startCutieElectionsHandler;
     private readonly ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message> _missionResultHandler;
     private readonly ITelegramFeatureHandler<MigrateChatFeatureRequest, Message> _chatMigrationHandler;
+    private readonly ITelegramFeatureHandler<StartMusicQuizFeatureRequest, Message> _startMusicQuizHandler;
+    private readonly ITelegramFeatureHandler<SendMusicQuizAnswerFeatureRequest, Message> _sendMusicQuizResultsHandler;
 
     public MessageHandlerFactory(
         ITelegramFeatureHandler<PickWhichPepeAmITodayFeatureRequest, Message> pepePickerHandler, 
         ITelegramFeatureHandler<StartCutieElectionsFeatureRequest, Message> startCutieElectionsHandler, 
         ITelegramFeatureHandler<RegisterInCutieFeatureRequest, Message> regInCutieHandler, 
         ITelegramFeatureHandler<SendMissionResultFeatureRequest, Message> missionResultHandler, 
-        ITelegramFeatureHandler<MigrateChatFeatureRequest, Message> chatMigrationHandler)
+        ITelegramFeatureHandler<MigrateChatFeatureRequest, Message> chatMigrationHandler, 
+        ITelegramFeatureHandler<StartMusicQuizFeatureRequest, Message> startMusicQuizHandler, 
+        ITelegramFeatureHandler<SendMusicQuizAnswerFeatureRequest, Message> sendMusicQuizResultsHandler)
     {
         _startCutieElectionsHandler = startCutieElectionsHandler;
         _regInCutieHandler = regInCutieHandler;
         _missionResultHandler = missionResultHandler;
         _chatMigrationHandler = chatMigrationHandler;
         _pepePickerHandler = pepePickerHandler;
+        _startMusicQuizHandler = startMusicQuizHandler;
+        _sendMusicQuizResultsHandler = sendMusicQuizResultsHandler;
     }
     
     public Task<Message>? GetHandlerFor(Message message, CancellationToken ct)
@@ -44,6 +52,21 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
         return action;
     }
 
+    public Task<Message>? GetHandlerFor(CallbackQuery callback, CancellationToken ct)
+    {
+        var result = callback.Data?.ToLower() switch
+        {
+            "wrong" => AnswerCallback.Wrong,
+            "correct" => AnswerCallback.Correct,
+            _ => AnswerCallback.Unknown
+        };
+        
+        var request = new SendMusicQuizAnswerFeatureRequest(callback.Message?.Chat.Id, callback.Id, 
+            callback.From.Username, callback.Message?.MessageId, result);
+        
+        return _sendMusicQuizResultsHandler.Handle(request, ct);
+    }
+
     private Task<Message>? GetTextMessageHandler(Message message, CancellationToken ct)
     {
         var action = message.Text!.Split(' ')[0] switch
@@ -58,6 +81,9 @@ internal class MessageHandlerFactory : IMessageHandlerFactory
 
             var cutieElections when Regex.IsMatch(cutieElections, @"^\/get_cutie[@]?")
                 => _startCutieElectionsHandler.Handle(new StartCutieElectionsFeatureRequest(message.Chat.Id), ct),
+            
+            var musicQuiz when Regex.IsMatch(musicQuiz, @"^\/quiz_me[@]?")
+                => _startMusicQuizHandler.Handle(new StartMusicQuizFeatureRequest(message.Chat.Id, message.From?.Username), ct),
 
             _ => null
         };

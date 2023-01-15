@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Speak.Extensions\Speak.Extensions.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.AudioContracts\Speak.Telegram.AudioContracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.CommonContracts\Speak.Telegram.CommonContracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.MusicQuizFeatureContracts\Speak.Telegram.MusicQuizFeatureContracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.Postgres\Speak.Telegram.Postgres.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    </ItemGroup>
+
+</Project>

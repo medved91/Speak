@@ -57,10 +57,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Speak.Telegram.Audio\Speak.Telegram.Audio.csproj" />
       <ProjectReference Include="..\Speak.Telegram.ChatMigrationFeatureContracts\Speak.Telegram.ChatMigrationFeatureContracts.csproj" />
       <ProjectReference Include="..\Speak.Telegram.ChatMigrationFeature\Speak.Telegram.ChatMigrationFeature.csproj" />
       <ProjectReference Include="..\Speak.Telegram.CutieFeature.Contracts\Speak.Telegram.CutieFeature.Contracts.csproj" />
       <ProjectReference Include="..\Speak.Telegram.CutieFeature\Speak.Telegram.CutieFeature.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.MusicQuizFeatureContracts\Speak.Telegram.MusicQuizFeatureContracts.csproj" />
+      <ProjectReference Include="..\Speak.Telegram.MusicQuizFeature\Speak.Telegram.MusicQuizFeature.csproj" />
       <ProjectReference Include="..\Speak.Telegram.PepeFeature\Speak.Telegram.PepeFeature.csproj" />
       <ProjectReference Include="..\Speak.Telegram.Postgres\Speak.Telegram.Postgres.csproj" />
     </ItemGroup>

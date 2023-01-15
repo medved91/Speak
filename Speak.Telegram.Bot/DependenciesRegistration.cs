@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Speak.Telegram.Audio;
 using Speak.Telegram.ChatMigrationFeature;
 using Speak.Telegram.CutieFeature;
+using Speak.Telegram.MusicQuizFeature;
 using Speak.Telegram.PepeFeature;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
@@ -37,7 +39,9 @@ public static class DependenciesRegistration
         services
             .AddPepeFeature()
             .AddCutieFeature()
-            .AddChatMigrationFeature();
+            .AddChatMigrationFeature()
+            .AddMusicQuizFeature()
+            .AddAudioService();
 
         services.AddPostgresDatabase(configuration);
 

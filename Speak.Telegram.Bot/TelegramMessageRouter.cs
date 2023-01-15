@@ -26,6 +26,7 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
         var handler = update.Type switch
         {
             UpdateType.Message => BotOnMessageReceivedAsync(update.Message!, ct),
+            UpdateType.CallbackQuery => BotOnCallbackReceivedAsync(update.CallbackQuery!, ct),
             _ => BotOnUnknownMessageReceivedAsync(update, ct)
         };
 
@@ -41,10 +42,22 @@ internal class TelegramMessageRouter : ITelegramMessageRouter
 
     private async Task BotOnMessageReceivedAsync(Message message, CancellationToken ct)
     {
-        _logger.LogInformation("Получено сообщение с типом: {MessageType}", message.Type);
+        _logger.LogInformation("Обрабатываем сообщение с типом: {MessageType}", message.Type);
 
         var handler = _handlerFactory.GetHandlerFor(message, ct);
         
+        if (handler == null) return;
+        
+        var sentMessage = await handler;
+        _logger.LogInformation("Отправлено сообщение с id: {SentMessageId}", sentMessage.MessageId);
+    }
+
+    private async Task BotOnCallbackReceivedAsync(CallbackQuery callback, CancellationToken ct)
+    {
+        _logger.LogInformation("Обрабатываем callback");
+        
+        var handler = _handlerFactory.GetHandlerFor(callback, ct);
+
         if (handler == null) return;
         
         var sentMessage = await handler;

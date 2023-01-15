@@ -5,6 +5,7 @@ using Speak.Telegram.CommonContracts;
 using Speak.Telegram.Postgres;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Chat = Speak.Telegram.CommonContracts.Chat;
 
 namespace Speak.Telegram.ChatMigrationFeature;
 
@@ -40,12 +41,17 @@ internal class MigrateChatFeatureHandler : ITelegramFeatureHandler<MigrateChatFe
 
         if (chatToMigrate == null)
         {
-            _logger.LogError("Не удалось мигрировать чат с Id: {OldChatId}. Чат не найден в нашей БД", request.OldChatId);
+            var newChat = new Chat { TelegramChatId = request.NewChatId.Value };
+            _dbContext.Chats.Add(newChat);
+            await _dbContext.SaveChangesAsync(ct);
             
+            _logger.LogInformation(
+                "Не удалось мигрировать чат с Id: {OldChatId}. " + 
+                "Чат не найден в нашей БД. Добавили чат с новым Id: {NewChatId}", 
+                request.OldChatId, request.NewChatId);
+
             return await _botClient.SendTextMessageAsync(request.OldChatId,
-                "У текущей группы сменился идентификатор. " +
-                "В процессе миграции настроек произошла ошибка :( Напиши, пожалуйста, @medveden91", 
-                cancellationToken: ct);
+                "У текущей группы сменился идентификатор. Настройки промигрированы успешно", cancellationToken: ct);
         }
 
         chatToMigrate.TelegramChatId = request.NewChatId.Value;

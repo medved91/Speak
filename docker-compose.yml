@@ -16,7 +16,10 @@ services:
     image: speak1.0:latest
     ports:
       - "443:443"
+    volumes:
+      - /home/Music:/app/Music:ro
     depends_on: [postgres]
+
 
 volumes:
   pgdata:
