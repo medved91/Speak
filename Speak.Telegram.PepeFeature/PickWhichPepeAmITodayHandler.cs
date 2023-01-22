@@ -19,6 +19,8 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
         "Считываю твое настроение...",
         "Анализирую, как ты себя вел последние дни..."
     };
+    
+    private const string PepesFolderPath = "/app/Pepes";
 
     public PickWhichPepeAmITodayHandler(ITelegramBotClient botClient, IRepository<TodayPepe> todayPepesRepo)
     {
@@ -65,7 +67,7 @@ internal class PickWhichPepeAmITodayHandler : ITelegramFeatureHandler<PickWhichP
     private async Task<Message> PickPepeAndSendMessage(PickWhichPepeAmITodayFeatureRequest request, CancellationToken ct)
     {
         var random = new Random();
-        var files = Directory.GetFiles("Files");
+        var files = Directory.GetFiles(PepesFolderPath);
         var randomPepeFilePath = files[random.Next(files.Length)];
 
         var todayUserPepe = new TodayPepe(request.Username!, randomPepeFilePath);
